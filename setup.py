@@ -7,4 +7,4 @@ setup(name = "tcbf",
       license_files = ('LICENSE',),
       packages = ["tcbf"],
       url = "https://github.com/hexin010101/Tcbf",
-     scripts=['bin/tcbf'])
+     scripts=['bin/tcbf','bin/tcbf_syn_process'])
