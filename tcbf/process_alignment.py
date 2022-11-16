@@ -1,9 +1,8 @@
 import os.path
 from tempfile import NamedTemporaryFile
 import pandas as pd
-from bin import run_command
-
-from bin import minimap2_align
+from tcbf.run_command import run_command
+from tcbf.aligner_paramters import minimap2_align
 
 
 def process_tad_paris(file):
