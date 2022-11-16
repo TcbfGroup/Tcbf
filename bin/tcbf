@@ -84,8 +84,8 @@ def process_alignment(query, target, output, threads, aligner, minioverlap):
 
 @tcbf.command()
 @click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
-def construct_TAD_network(workdir):
-    network_construct(workdir)
+def construct_TAD_network(output):
+    network_construct(output)
 
 
 if __name__ == '__main__':
