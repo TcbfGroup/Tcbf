@@ -6,4 +6,4 @@ pandas==1.4.3
 pyarrow==9.0.0
 pyfastx==0.8.4
 pysam
-setuptools==57.5.0
+setuptools
