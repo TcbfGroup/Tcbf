@@ -1,6 +1,6 @@
 import os.path
 from itertools import combinations
-from bin import run_command
+from tcbf.run_command import run_command
 import pandas as pd
 from collections import defaultdict
 

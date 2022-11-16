@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 import click
-from bin import extract_TAD_boundary
-from bin import align_genome
-from bin import network_construct
-from bin import Check_dependencies
 from itertools import permutations
-
-
-
+from tcbf.extract_TAD_bound import extract_TAD_boundary
+from tcbf.process_alignment import align_genome
+from tcbf.network_construct import network_construct
+from tcbf.check_depend import Check_dependencies
 
 
 @click.group()
@@ -36,7 +33,8 @@ def run(config, output, processor, distance, aligner, minioverlap,
             genome_file, TAD_file, species_name = line.split()
             all_species.append(species_name)
             if only_print_command:
-                command = f"tcbf extract-boundary -t {TAD_file} -g {genome_file} -d {distance} -p {species_name} -o {workdir}"
+                command = f"tcbf extract-boundary -t {TAD_file} -g {genome_file} -d {distance} -p {species_name} -o" \
+                          f" {workdir}"
                 print(command)
             else:
                 extract_TAD_boundary(tad=TAD_file,

@@ -1,7 +1,7 @@
 import os
 import shutil
 import sys
-from bin import run_command
+from tcbf.run_command import run_command
 
 def Check_dependencies():
     print("Checking dependency! ")

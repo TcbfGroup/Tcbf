@@ -1,6 +1,6 @@
 import os.path
 from tempfile import NamedTemporaryFile
-from bin import run_command
+from tcbf.run_command import run_command
 from pandas import read_table
 import pyarrow.feather as feather
 aligner_paramter = {
