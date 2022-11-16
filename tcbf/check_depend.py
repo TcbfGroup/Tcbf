@@ -23,7 +23,7 @@ def Check_dependencies():
                 sys.exit()
     if have_command_not_in_path:
         os.environ["PATH"] = os.environ["PATH"] + ":" + os.path.join(os.path.abspath("."),"external")
-    print(os.environ["PATH"])
+
 
 
 
