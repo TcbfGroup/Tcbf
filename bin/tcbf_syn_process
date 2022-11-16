@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 library(GenomicRanges)
 library(tidyverse)
 library(feather)

@@ -1,11 +1,9 @@
 import os.path
 from tempfile import NamedTemporaryFile
-import pyarrow.feather as feather
-import click
 import pandas as pd
-from tcbf.run_command import run_command
+from bin import run_command
 
-from tcbf.aligner_paramters import minimap2_align
+from bin import minimap2_align
 
 
 def process_tad_paris(file):
@@ -143,7 +141,7 @@ def align_genome(query, target, workdir, threads, aligner, minioverlap):
         os.mkdir(result_dir)
 
     script_path = os.path.split(os.path.realpath(__file__))[0]
-    R_script_path = os.path.join(script_path, "syn_process2.R")
+    R_script_path = os.path.join(script_path, "../bin/tcbf_syn_process")
 
     query_bound = os.path.join(workdir, "Step1", f"{query}.bound.fasta")
     target_genome = os.path.join(workdir, "Step1", f"{target}.genome.fa")
@@ -167,7 +165,7 @@ def align_genome(query, target, workdir, threads, aligner, minioverlap):
         else:
             raise TypeError(f"Wrong aligner for {aligner}!!!")
 
-        command = f"Rscript {R_script_path}  {Collinearity.name} {target_TAD} " \
+        command = f"tcbf_syn_process {Collinearity.name} {target_TAD} " \
                   f" {bound_bed}  {network_out} {minioverlap}"
         run_command(command)
 

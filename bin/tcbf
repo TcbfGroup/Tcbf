@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-import os.path
 import click
-import sys
-from tcbf.extract_TAD_bound import extract_TAD_boundary
-from tcbf.process_alignment import align_genome
-from tcbf.network_construct import network_construct
-from tcbf.check_depend import Check_dependencies
+from bin import extract_TAD_boundary
+from bin import align_genome
+from bin import network_construct
+from bin import Check_dependencies
 from itertools import permutations
 
 
@@ -51,7 +49,7 @@ def run(config, output, processor, distance, aligner, minioverlap,
     for s1, s2 in permutations(all_species, 2):
         if only_print_command:
             command = f"tcbf process-alignment -q {s1} -t {s2} -o {workdir} --threads {processor} " \
-                      f"-aligner minimap2 -miniOverlap {minioverlap}"
+                      f"-aligner minimap2 -minioverlap {minioverlap}"
             print(command)
         else:
             align_genome(s1, s2, workdir, processor, aligner, minioverlap)
@@ -82,8 +80,8 @@ def extract_boundary(tad: str,
 @click.option("--threads", type=int, help="比对的线程数", required=False, default=0)
 @click.option("-aligner", type=click.Choice(["minimap2", "lastz", "blat", "GSAlign"]), default="minimap2")
 @click.option("-miniOverlap", type=int, default=5000)
-def process_alignment(query, target, output, threads, aligner, miniOverlap):
-    align_genome(query, target, output, threads, aligner, miniOverlap)
+def process_alignment(query, target, output, threads, aligner, minioverlap):
+    align_genome(query, target, output, threads, aligner, minioverlap)
 
 
 @tcbf.command()
