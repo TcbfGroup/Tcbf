@@ -77,7 +77,7 @@ def extract_boundary(tad: str,
 @click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
 @click.option("--threads", type=int, help="比对的线程数", required=False, default=0)
 @click.option("-aligner", type=click.Choice(["minimap2", "lastz", "blat", "GSAlign"]), default="minimap2")
-@click.option("-miniOverlap", type=int, default=5000)
+@click.option("-minioverlap", type=int, default=5000)
 def process_alignment(query, target, output, threads, aligner, minioverlap):
     align_genome(query, target, output, threads, aligner, minioverlap)
 
