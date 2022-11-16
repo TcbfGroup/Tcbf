@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-
+import os.path
 import click
 import sys
 from tcbf.extract_TAD_bound import extract_TAD_boundary
 from tcbf.process_alignment import align_genome
 from tcbf.network_construct import network_construct
+from tcbf.check_depend import Check_dependencies
 from itertools import permutations
 
 
-def Check_dependencies():
-    pass
+
 
 
 @click.group()

@@ -5,5 +5,5 @@ numpy==1.23.2
 pandas==1.4.3
 pyarrow==9.0.0
 pyfastx==0.8.4
-pysam==0.19.1
+pysam
 setuptools==57.5.0
