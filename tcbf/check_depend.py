@@ -30,7 +30,7 @@ def Check_dependencies():
 
 
 def download_minimap2():
-    command = "https://github.com/lh3/minimap2/releases/download/v2.24/minimap2-2.24_x64-linux.tar.bz2 -O minimap2.tar.bz2;" \
+    command = "wget https://github.com/lh3/minimap2/releases/download/v2.24/minimap2-2.24_x64-linux.tar.bz2 -O minimap2.tar.bz2;" \
           "tar xvjf  minimap2.tar.bz2;" \
           "cp minimap2-2.24_x64-linux/minimap2 external"
     run_command(command)
