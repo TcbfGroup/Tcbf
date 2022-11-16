@@ -14,11 +14,11 @@
 ___
 TADs are fundamental regulatory chromatin structures and are
 largely conserved across tissues and species. We developed 
-a python pipeline Tcbf to identify the conservative TAD boundary between 
-multipy species.
+a python pipeline Tcbf to identify the conservative TAD boundary between
+multiple genome.
 ___
 ## ✨ Pre-requisite:
-### MCL
+### [MCL](https://github.com/micans/mcl)
 The mcl clustering algorithm is available in the
 repositories of some Linux distributions and so can be
 installed in the same way as any other package. 
@@ -33,6 +33,12 @@ or equivalent package on the Linux distribution being
 used. Instructions are provided on the MCL webpage, 
 http://micans.org/mcl/.
 
+### [Minimap2](https://github.com/lh3/minimap2)
+The default aligner is minimap2. In the future, we will consider supporting more aligner.
+
+### [Mash](https://github.com/marbl/Mash)
+Mash is used to measure the genetics distance between different genome sequences and adjust the alignment parameters.
+
 
 ### R language and the following packages
 
@@ -40,6 +46,7 @@ http://micans.org/mcl/.
 install.packages("BiocManager")
 install.packages("feather")
 BiocManager::install("GenomicRanges")
+BioManager::install("plyranges")
 install.packages("tidyverse")
 ```
 
@@ -75,8 +82,7 @@ ___
 You can test the Tcbf pipeline with a toy project. which takes about five mins.
 To run Tcbf on the example Data:
 ```
-mkdir test
-Tcbf.py -c config.txt -all --workdir test
+Tcbf.py run -c config.txt  -o test
 ```
 
 ### Inputs
@@ -101,6 +107,7 @@ genome4.fasta   genome4_tad.txt g4
 we use the results from [HiTAD](https://academic.oup.com/nar/article/45/19/e163/4093166) 
 as the TAD annotate file 
 ```
+#cat genome1_tad.txt
 Chr01   0       2300000
 Chr01   2300000 3950000
 Chr01   3950000 4600000
@@ -110,11 +117,7 @@ Chr01   5900000 6350000
 if your TAD annotated file from other software, we also provide a [method]() 
 to convert.
 
-For more adjustable parameters
-, you can view [base.cfg]()
 
-
-`Tcbf.py -c config.txt -all --workdir test --base_cfg base_changed.cfg`
 ### Output
 For conserved TAD boundaries among species, we provide a table file to show the 
 the clustering results. This table has one TAD boundary group per line and one spcies per column and is ordered
@@ -135,6 +138,12 @@ to explore the conserved TAD structure. For More detail, see [Here]().
 "A_1":["B_2","B_3"] ## TAD splited              
 }
 ```
+### Advanced
+For HPC users have multiple nodes, we also provide a step by step to accelerate work.
+```
+tcbf run -c config.txt  -o test --only_print_command
+```
+For more details, see [Here]()
 
 
 

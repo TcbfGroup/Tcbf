@@ -44,8 +44,6 @@ def download_mcl():
     run_command(command)
 
 
-
-
 def download_mash():
     command = "wget https://github.com/marbl/Mash/releases/download/v2.3/mash-Linux64-v2.3.tar;" \
               "tar xf mash-Linux64-v2.3.tar;" \

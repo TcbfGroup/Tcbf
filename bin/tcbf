@@ -38,7 +38,7 @@ def run(config, output, processor, distance, aligner, minioverlap,
             genome_file, TAD_file, species_name = line.split()
             all_species.append(species_name)
             if only_print_command:
-                command = f"tcbf extract_boundary -t {TAD_file} -g {genome_file} -d {distance} -p {species_name} -o {workdir}"
+                command = f"tcbf extract-boundary -t {TAD_file} -g {genome_file} -d {distance} -p {species_name} -o {workdir}"
                 print(command)
             else:
                 extract_TAD_boundary(tad=TAD_file,
@@ -50,7 +50,7 @@ def run(config, output, processor, distance, aligner, minioverlap,
     print("### Step2")
     for s1, s2 in permutations(all_species, 2):
         if only_print_command:
-            command = f"tcbf process_alignment -q {s1} -t {s2} -o {workdir} --threads {processor} " \
+            command = f"tcbf process-alignment -q {s1} -t {s2} -o {workdir} --threads {processor} " \
                       f"-aligner minimap2 -miniOverlap {minioverlap}"
             print(command)
         else:
