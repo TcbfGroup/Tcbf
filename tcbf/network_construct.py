@@ -89,7 +89,7 @@ def network_construct(workdir):
     if not os.path.exists(run_dir):
         os.mkdir(run_dir)
     Result = os.path.join(abs_path, "Result")
-    if not os.path.join(Result):
+    if not os.path.exists(Result):
         os.mkdir(Result)
     sub_network_construct(abs_path)
 
