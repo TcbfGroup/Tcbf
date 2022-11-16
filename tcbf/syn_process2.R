@@ -1,0 +1,57 @@
+library(GenomicRanges)
+library(tidyverse)
+library(feather)
+library(arrow)
+library(plyranges)
+###本脚本用来处理将TAD边界比对到另一个物种的基因组上的共线性结果，
+# 检查在另一个物种的基因组上比对区域是否也是TAD边界。
+###
+
+
+
+args <- commandArgs(trailingOnly  = TRUE)
+
+syn <- args[1]
+
+tad <- args[2]
+
+bound <- args[3]
+
+#output file name
+network <- args[4]
+
+
+minioverlap <-  args[5]
+
+
+
+
+# 读取基因组map的结果
+synteny <-  arrow::read_feather(syn) %>%
+  select(seq_id,seq_id2,start2,end2) %>%
+  dplyr::rename(seqnames = seq_id2,
+         start = start2,
+         end = end2) %>%
+  as_granges() %>%
+  group_by(seq_id) %>% reduce_ranges()
+
+#读取reference genome的TAD 信息
+
+
+target.bound <- read_csv(bound) %>%
+  dplyr::rename(seqnames = chromosome) %>%
+  as_granges()
+
+
+minioverlap = 5000
+result = tibble(data.frame(find_overlaps(synteny,target.bound,minoverlap = minioverlap))) %>%
+  group_by(seq_id,tad_name) %>%
+  summarise(score = sum(width))
+
+
+
+
+
+
+
+write_tsv(result,network)

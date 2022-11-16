@@ -1,0 +1,44 @@
+import os.path
+from tempfile import NamedTemporaryFile
+from tcbf.run_command import run_command
+from pandas import read_table
+import pyarrow.feather as feather
+aligner_paramter = {
+
+    "minimap2": {"near": "-cx asm5",
+                 "medium": "-cx asm10",
+                 "far": "-cx asm20"},
+}
+
+
+def mash_distance(genome1, genome2):
+    if not os.path.exists(genome1 + ".msh"):
+        run_command(f"mash sketch {genome1}")
+    if not os.path.exists(genome2 + ".msh"):
+        run_command(f"mash sketch {genome1}")
+    distance = float(run_command(f"mash dist {genome1}.msh {genome2}.msh").split()[2])
+    return distance
+
+
+def minimap2_align(bound_query, target, output_file,threads, parameter=None):
+    def process_minimap_result(paf_file, out):
+        col_names = "seq_id length start end strand seq_id2 length2 start2 end2 map_match map_length map_quality".split()
+
+        data = read_table(paf_file, header=None, names=col_names, usecols=range(12))
+        need = "seq_id start end seq_id2 start2 end2".split()
+
+        feather.write_feather(data.loc[:, need].sort_values(["seq_id", "seq_id2", "start2", "end2"]), out)
+    genome1 = bound_query.replace("bound.fasta","genome.fa")
+
+    if not parameter:
+        distance = mash_distance(genome1, target)
+        if distance <= 0.02:
+            parameter = " -x asm5 "
+        elif distance <= 0.8:
+            parameter = " -x asm10 "
+        else:
+            parameter = " -x asm20 "
+    with NamedTemporaryFile("w+t") as paf:
+        command = f"minimap2  {parameter} -t {threads} {target} {bound_query}  > {paf.name}"
+        run_command(command)
+        process_minimap_result(paf.name, output_file)
