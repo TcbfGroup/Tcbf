@@ -73,7 +73,7 @@ def get_max_score(network1, network2):
     n1 = n1.iloc[:, 2:]
     n2 = n2.iloc[:, 2:]
     n = n1.merge(n2, how="outer", on="combine")
-    max_score = n.iloc[:,1:].max(axis=1)
+    max_score = n.iloc[:,[0,2]].max(axis=1)
     data = n["combine"].str.split("-", expand=True)
     data["max_score"] = max_score
     data.columns = "genome1 genome2 score".split()
