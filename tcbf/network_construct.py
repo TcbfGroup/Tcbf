@@ -21,7 +21,7 @@ def sub_network_construct(workdir):
         os.unlink(merge_file)
     network_file = os.path.join(workdir, "Step3", "out.clean.network.txt")
     for s1,s2 in combinations(species,2):
-        print(f"processing {s1} {s2}")
+
         get_max_score(os.path.join(step2,f"{s1}_{s2}.network.bed"),
                       os.path.join(step2, f"{s2}_{s1}.network.bed"),
                       ).to_csv(merge_file,header = False,index=False,sep = "\t",mode = "a")
@@ -73,7 +73,7 @@ def get_max_score(network1, network2):
     n1 = n1.iloc[:, 2:]
     n2 = n2.iloc[:, 2:]
     n = n1.merge(n2, how="outer", on="combine")
-    max_score = n.max(axis=1)
+    max_score = n.iloc[:,1:].max(axis=1)
     data = n["combine"].str.split("-", expand=True)
     data["max_score"] = max_score
     data.columns = "genome1 genome2 score".split()
@@ -88,12 +88,12 @@ def network_construct(workdir):
 
     if not os.path.exists(run_dir):
         os.mkdir(run_dir)
-
-    sub_network_construct(abs_path)
-
-    Result = os.path.join(abs_path,"Result")
+    Result = os.path.join(abs_path, "Result")
     if not os.path.join(Result):
         os.mkdir(Result)
+    sub_network_construct(abs_path)
+
+
 
     extract_ortho_group(abs_path)
 
