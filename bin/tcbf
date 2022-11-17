@@ -51,10 +51,12 @@ def run(config, output, processor, distance, aligner, minioverlap,
             print(command)
         else:
             align_genome(s1, s2, workdir, processor, aligner, minioverlap)
-
-    print("### Step3")
-    command3 = f"tcbf  construct-tad-network -o {workdir}"
-    print(command3)
+    if only_print_command:
+        print("### Step3")
+        command3 = f"tcbf  construct-tad-network -o {workdir}"
+        print(command3)
+    else:
+        construct_TAD_network(workdir)
 
 
 @tcbf.command()
