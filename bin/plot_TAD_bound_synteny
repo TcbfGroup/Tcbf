@@ -1,0 +1,18 @@
+#!/usr/bin/env Rscript
+
+args <- commandArgs(trailingOnly  = TRUE)
+
+syn <- args[1]
+
+out_image <- args[2]
+
+library(gggenomes)
+link <- read_paf(syn)
+
+
+plot <- gggenomes(links = link) +
+  geom_seq() +
+  geom_bin_label() +
+  geom_link()
+
+ggsave(plot,filename = out_image)
