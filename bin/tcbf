@@ -5,7 +5,7 @@ from tcbf.extract_TAD_bound import extract_TAD_boundary
 from tcbf.process_alignment import align_genome
 from tcbf.network_construct import network_construct
 from tcbf.check_depend import Check_dependencies
-
+from tcbf.Each_group_synteny import  plot_synteny
 
 @click.group()
 def tcbf():
@@ -89,6 +89,14 @@ def process_alignment(query, target, output, threads, aligner, minioverlap):
 def construct_TAD_network(output):
     network_construct(output)
 
+
+@tcbf.command()
+@click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
+@click.option("--boundary",multiple = True,required = True)
+@click.option("--plot",required = True)
+def plot(output,boundary,plot):
+
+    plot_synteny(output,boundary,plot)
 
 if __name__ == '__main__':
     tcbf()
