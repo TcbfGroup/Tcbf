@@ -57,7 +57,7 @@ def extract_ortho_group(abspath):
     count = data.apply(lambda x:x.str.len())
     data = data.applymap(lambda x:";".join(x) if x else "")
     data.to_csv(Group_file,sep = "\t")
-    pd.DataFrame(unassign).to_csv(Un_Assign,sep="\t")
+    pd.DataFrame(unassign).to_csv(Un_Assign,sep="\t",index = False)
     count.to_csv(TAD_count,sep = "\t")
 
 

@@ -5,7 +5,8 @@ from tcbf.extract_TAD_bound import extract_TAD_boundary
 from tcbf.process_alignment import align_genome
 from tcbf.network_construct import network_construct
 from tcbf.check_depend import Check_dependencies
-from tcbf.Each_group_synteny import  plot_synteny
+from tcbf.Each_group_synteny import plot_synteny
+from tcbf.circos import plot_circos
 
 @click.group()
 def tcbf():
@@ -92,11 +93,18 @@ def construct_TAD_network(output):
 
 @tcbf.command()
 @click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
-@click.option("--boundary",multiple = True,required = True)
-@click.option("--plot",required = True)
-def plot(output,boundary,plot):
+@click.option("--boundary", multiple=True, required=True)
+@click.option("--plot", required=True)
+def plot_syn(output, boundary, plot):
+    plot_synteny(output, boundary, plot)
 
-    plot_synteny(output,boundary,plot)
+@tcbf.command()
+@click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
+@click.option("--reference", required=True)
+@click.option("--plot", required=True)
+def circos(output, reference, plot):
+    plot_circos(output, reference,plot)
+
 
 if __name__ == '__main__':
     tcbf()
