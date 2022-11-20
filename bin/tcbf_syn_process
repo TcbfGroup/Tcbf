@@ -50,7 +50,11 @@ target.bound <- read_csv(bound) %>%
 
 result = tibble(data.frame(find_overlaps(synteny,target.bound,minoverlap = minioverlap))) %>%
   group_by(seq_id,tad_name) %>%
-  summarise(score = sum(width))
+  summarise(score = sum(width)) %>%
+  arrarge(seq_id,desc(score))
+
+result = result[!duplicated(result$seq_id),]
+
 
 
 
