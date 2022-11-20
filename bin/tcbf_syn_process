@@ -24,7 +24,7 @@ bound <- args[3]
 network <- args[4]
 
 
-minioverlap <-  args[5]
+minioverlap <-  as.integer(args[5])
 
 
 
