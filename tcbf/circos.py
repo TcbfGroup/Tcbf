@@ -89,7 +89,7 @@ def plot_circos(workdir, reference,output):
     circle = Gcircle(figsize=(30, 30))
     chrom_info = get_chromosome(workdir, reference)
 
-    min_circos = 200
+    min_circos = 350
     max_circos = 800
     every = int((max_circos - min_circos) / species_num)
 
@@ -139,6 +139,3 @@ def plot_circos(workdir, reference,output):
 
     circle.figure.savefig(output)
 
-
-if __name__ == '__main__':
-    plot_circos("/root/run", "A2")

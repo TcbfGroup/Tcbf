@@ -29,7 +29,8 @@ def plot_synteny(workdir, TAD_names: list, output_file):
         with NamedTemporaryFile("wt") as temp_file:
             for line in seqs:
                 temp_file.write(f">{line[0]}\n{format_seq(line[1])}\n")
-            command = f"minimap2 -X -N 50 -p 0.1 -c  {temp_file.name}  {temp_file.name}  > {temp_paf.name}"
+            command = f"minimap2 -X -N 50  -c  -p 0.1 {temp_file.name}  {temp_file.name}  > {temp_paf.name}"
             run_command(command)
+            print(command)
             command2 = f"plot_TAD_bound_synteny {temp_paf.name} {output_file}"
             run_command(command2)

@@ -7,7 +7,8 @@ syn <- args[1]
 out_image <- args[2]
 
 library(gggenomes)
-link <- read_paf(syn)
+link <- read_paf(syn) %>%
+    dplyr::filter((end - start2) >= 3000)
 
 
 plot <- gggenomes(links = link) +
