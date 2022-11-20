@@ -47,7 +47,7 @@ target.bound <- read_csv(bound) %>%
   as_granges()
 
 
-minioverlap = 5000
+
 result = tibble(data.frame(find_overlaps(synteny,target.bound,minoverlap = minioverlap))) %>%
   group_by(seq_id,tad_name) %>%
   summarise(score = sum(width))
