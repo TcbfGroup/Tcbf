@@ -1,6 +1,6 @@
 import os.path
 from tcbf.extract_TAD_bound import format_seq
-import pyfastx
+
 from tempfile import NamedTemporaryFile
 from tcbf.run_command import run_command
 import pysam
