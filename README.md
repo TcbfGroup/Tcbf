@@ -56,10 +56,13 @@ formatting, but they are also faster!
 ___
 ## 🔰 Installation
 
-**pip install**
-```shell
-pip install Tcbf
-```
+[//]: # (**pip install**)
+
+[//]: # (```shell)
+
+[//]: # (pip install Tcbf)
+
+[//]: # (```)
 
 **Install from source**
 ```shell
@@ -69,13 +72,15 @@ pip install -r requirements.txt
 python setup.py install
 ```
 
-### Quick installation using docker
+[//]: # (### Quick installation using docker)
 
-`docker pull Tcbf`
+[//]: # ()
+[//]: # (`docker pull Tcbf`)
 
-Singularity container source
+[//]: # (Singularity container source)
 
-`singularity pull Tcbf.sif docker://Tcbf`
+[//]: # ()
+[//]: # (`singularity pull Tcbf.sif docker://Tcbf`)
 ___
 ## 📝 Usage
 
