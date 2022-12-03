@@ -216,7 +216,7 @@ class Triangle(object):
 
 
 def plot_syn(ax):
-    Path = mpath.Path  # w w  w   .  de   m  o 2   s  .   c  o m
+    Path = mpath.Path
 
     A = ((100, 1), (200, 1))
     B = ((100, 2), (200, 2))

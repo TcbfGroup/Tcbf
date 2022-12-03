@@ -7,9 +7,6 @@ import click
 from tcbf.run_command import run_command
 
 
-import subprocess
-import sys
-
 """
 python extract_TAD_bound.py  -t /data/A_genome_tad.txt \
 -g /data/Garboreum_genome_HAU_v1.0/Lachesis_assembly_changed.fa -d 150000 -p A -o ~/data
@@ -118,6 +115,7 @@ class TADs:
 
         tad_table = read_table(tad_file, header=None)
         tad_table.columns = "chromosome start end".split()
+        tad_table["chromosome"] = tad_table["chromosome"].astype(str)
         tad_table["chromosome"] = prefix + "_" + tad_table["chromosome"]
         self.bound_percent = bound_percent
         self.distance = distance
