@@ -93,7 +93,7 @@ def add_prefix(fa, prefix, out):
     seq = pyfastx.Fasta(fa)
     with open(out, "w") as f:
         for line in seq:
-            f.write(f">{prefix}_{line.name}\n{format_seq(line.seq)}")
+            f.write(f">{prefix}_{line.name}\n{format_seq(line.seq.upper())}")
 
 
 def mash_genome(genome_fasta):
