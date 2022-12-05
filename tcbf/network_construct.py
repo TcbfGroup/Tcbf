@@ -12,7 +12,7 @@ def get_species(workdir):
     return species
 
 
-def sub_network_construct(workdir,need_syn):
+def sub_network_construct(workdir, need_syn):
     step2 = os.path.join(workdir, "Step2")
     species = get_species(workdir)
     merge_file = os.path.join(workdir, "Step3", "merge.network.txt")
@@ -21,9 +21,9 @@ def sub_network_construct(workdir,need_syn):
     network_file = os.path.join(workdir, "Step3", "out.clean.network.txt")
     file_template = "{}_{}.block.txt" if need_syn else "{}_{}.network.bed"
     for s1, s2 in combinations(species, 2):
-
-        if max_score := get_max_score(os.path.join(step2, file_template.format(s1,s2)),
-                                    os.path.join(step2, file_template.format(s2,s1))):
+        file1 = os.path.join(step2, file_template.format(s1, s2))
+        file2 = os.path.join(step2, file_template.format(s2, s1))
+        if max_score := get_max_score(file1,file2):
             max_score.to_csv(merge_file, header=False, index=False, sep="\t", mode="a")
 
     command = f"mcl {merge_file} --abc -o {network_file}"
@@ -79,27 +79,25 @@ def extract_ortho_group(abspath):
     unassign_df.to_csv(Un_Assign, sep="\t", index=False)
     count.to_csv(TAD_count, sep="\t")
 
-    one_to_many = os.path.join(abspath,"Result","one_to_many")
+    one_to_many = os.path.join(abspath, "Result", "one_to_many")
     if not os.path.exists(one_to_many):
         os.mkdir(one_to_many)
     all_species = get_species(abspath)
 
-    merge = concat([data,unassign_df])
+    merge = concat([data, unassign_df])
     for species in all_species:
-        boundary_file = os.path.join(abspath,"Step1",f"{species}.bound.bed")
+        boundary_file = os.path.join(abspath, "Step1", f"{species}.bound.bed")
         reference_TAD_boundary_order = read_csv(boundary_file)["tad_name"]
         tmp = merge.dropna(subset=[species])
         rr = []
         for i in reference_TAD_boundary_order:
             rr.append(tmp[tmp[species].str.contains(f"{i}(;|$)")])
 
-        result_file = os.path.join(one_to_many,f"{species}.txt")
+        result_file = os.path.join(one_to_many, f"{species}.txt")
         res = concat(rr)
         res.pop(species)
-        res.insert(0,species,list(reference_TAD_boundary_order))
-        res.to_csv(result_file,index=False,sep = "\t")
-
-
+        res.insert(0, species, list(reference_TAD_boundary_order))
+        res.to_csv(result_file, index=False, sep="\t")
 
 
 def get_max_score(network1, network2):
@@ -119,7 +117,7 @@ def get_max_score(network1, network2):
     return data
 
 
-def network_construct(workdir,need_syn):
+def network_construct(workdir, need_syn):
     options.mode.chained_assignment = None
     abs_path = os.path.abspath(workdir)
     run_dir = os.path.join(abs_path, "Step3")
@@ -129,6 +127,6 @@ def network_construct(workdir,need_syn):
     Result = os.path.join(abs_path, "Result")
     if not os.path.exists(Result):
         os.mkdir(Result)
-    sub_network_construct(abs_path,need_syn)
+    sub_network_construct(abs_path, need_syn)
 
     extract_ortho_group(abs_path)
