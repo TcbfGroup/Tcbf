@@ -6,7 +6,7 @@ from tcbf.process_alignment import align_genome
 from tcbf.network_construct import network_construct
 from tcbf.check_depend import Check_dependencies
 from tcbf.Each_group_synteny import plot_synteny
-from tcbf.circos import plot_circos
+from tcbf.visualization.circos import plot_circos
 
 @click.group()
 def tcbf():

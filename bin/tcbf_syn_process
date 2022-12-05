@@ -53,13 +53,5 @@ result = tibble(data.frame(find_overlaps(synteny,target.bound,minoverlap = minio
   summarise(score = sum(width)) %>%
   arrange(seq_id,desc(score))
 
-result = result[!duplicated(result$seq_id),]
-
-
-
-
-
-
-
 
 write_tsv(result,network)

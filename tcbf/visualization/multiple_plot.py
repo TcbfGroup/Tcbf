@@ -145,7 +145,7 @@ def plot_syn(ax, point1, point2):
 
 
 clr = cooler.Cooler("/root/data/D5.cool")
-chrom1 = "Chr02"
+chrom1 = "Chr05"
 start1 = 20.68e+6
 end1 = 25.62e+6
 

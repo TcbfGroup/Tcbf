@@ -1,4 +1,5 @@
 import os.path
+import sys
 from tempfile import NamedTemporaryFile
 import pandas as pd
 from tcbf.run_command import run_command
@@ -139,8 +140,6 @@ def align_genome(query, target, workdir, threads, aligner, minioverlap):
     if not os.path.exists(result_dir):
         os.mkdir(result_dir)
 
-    script_path = os.path.split(os.path.realpath(__file__))[0]
-    R_script_path = os.path.join(script_path, "../bin/tcbf_syn_process")
 
     query_bound = os.path.join(workdir, "Step1", f"{query}.bound.fasta")
     target_genome = os.path.join(workdir, "Step1", f"{target}.genome.fa")
@@ -153,7 +152,7 @@ def align_genome(query, target, workdir, threads, aligner, minioverlap):
 
     with NamedTemporaryFile("w+t") as Collinearity:
         if aligner == "nucmer":
-            pass
+            sys.exit("Nucmer is not supported temporarily, and will be added in the future")
             # nucmer_align(query_bound, target_genome, Collinearity.name, threads=threads)
         elif aligner == "minimap2":
             minimap2_align(query_bound,
