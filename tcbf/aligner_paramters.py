@@ -39,6 +39,6 @@ def minimap2_align(bound_query, target, output_file,threads, parameter=None):
         else:
             parameter = " -x asm20 "
     with NamedTemporaryFile("w+t") as paf:
-        command = f"minimap2  {parameter} -t {threads} {target} {bound_query}  > {paf.name}"
+        command = f"minimap2  {parameter} -t {threads} --cs {target} {bound_query}  > {paf.name}"
         run_command(command)
         process_minimap_result(paf.name, output_file)

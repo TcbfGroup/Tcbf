@@ -155,7 +155,7 @@ class Triangle(object):
                                 si, ei = st, et
             if not si is None:
                 Bool[si, ei] = 1
-                # Bool[ei, si] = 1
+                # Bool[ei, ti] = 1
 
         lx = self.hx[:-1, :-1][np.flipud(Bool)]
         ly = self.hy[:-1, :-1][np.flipud(Bool)] + 1

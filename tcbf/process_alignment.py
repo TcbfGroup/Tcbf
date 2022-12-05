@@ -131,7 +131,8 @@ def process_tad_paris(file):
 #                 process_nucmer_coord(coord.name, output)
 
 
-def align_genome(query, target, workdir, threads, aligner, minioverlap):
+def align_genome(query, target, workdir, threads, aligner, minioverlap,
+                 xdist=10,ydist=10,N = 4):
     if threads <= 0:
         from multiprocessing import cpu_count
         threads = cpu_count()
@@ -166,5 +167,7 @@ def align_genome(query, target, workdir, threads, aligner, minioverlap):
         command = f"tcbf_syn_process {Collinearity.name} {target_TAD} " \
                   f" {bound_bed}  {network_out} {minioverlap}"
         run_command(command)
+    from tcbf.construct_synteny_block import construct_block
+    construct_block(workdir,query,target,xdist,ydist,N)
 
 

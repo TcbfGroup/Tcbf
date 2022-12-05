@@ -20,8 +20,8 @@ def sub_network_construct(workdir):
         os.unlink(merge_file)
     network_file = os.path.join(workdir, "Step3", "out.clean.network.txt")
     for s1, s2 in combinations(species, 2):
-        get_max_score(os.path.join(step2, f"{s1}_{s2}.network.bed"),
-                      os.path.join(step2, f"{s2}_{s1}.network.bed"),
+        get_max_score(os.path.join(step2, f"{s1}_{s2}.block.txt"),
+                      os.path.join(step2, f"{s2}_{s1}.block.txt"),
                       ).to_csv(merge_file, header=False, index=False, sep="\t", mode="a")
 
     command = f"mcl {merge_file} --abc -o {network_file}"
