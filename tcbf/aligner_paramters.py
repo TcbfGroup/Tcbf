@@ -34,7 +34,7 @@ def minimap2_align(bound_query, target, output_file,threads, parameter=None):
         distance = mash_distance(genome1, target)
         if distance <= 0.02:
             parameter = " -x asm5 "
-        elif distance <= 0.8:
+        elif distance <= 0.08:
             parameter = " -x asm10 "
         else:
             parameter = " -x asm20 "
