@@ -89,8 +89,8 @@ def process_alignment(query, target, output, threads, aligner, minioverlap):
 @tcbf.command()
 @click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
 @click.option('--syn', default=False, required=False, help="是否使用共线性的结果过滤", is_flag=True)
-def construct_TAD_network(output,need_syn):
-    network_construct(output,need_syn=need_syn)
+def construct_TAD_network(output,syn):
+    network_construct(output,need_syn=syn)
 
 
 @tcbf.command()
