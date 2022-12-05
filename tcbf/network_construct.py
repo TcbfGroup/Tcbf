@@ -93,8 +93,8 @@ def extract_ortho_group(abspath):
 
         result_file = os.path.join(one_to_many,f"{species}.txt")
         res = concat(rr)
-        first_columns = res.pop(species)
-        res.insert(0,species,first_columns)
+        res.pop(species)
+        res.insert(0,species,reference_TAD_boundary_order)
         res.to_csv(result_file,index=False,sep = "\t")
 
 
