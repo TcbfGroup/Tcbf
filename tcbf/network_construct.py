@@ -12,17 +12,19 @@ def get_species(workdir):
     return species
 
 
-def sub_network_construct(workdir):
+def sub_network_construct(workdir,need_syn):
     step2 = os.path.join(workdir, "Step2")
     species = get_species(workdir)
     merge_file = os.path.join(workdir, "Step3", "merge.network.txt")
     if os.path.exists(merge_file):
         os.unlink(merge_file)
     network_file = os.path.join(workdir, "Step3", "out.clean.network.txt")
+    file_template = "{}_{}.block.txt" if need_syn else "{}_{}..network.bed"
     for s1, s2 in combinations(species, 2):
-        get_max_score(os.path.join(step2, f"{s1}_{s2}.block.txt"),
-                      os.path.join(step2, f"{s2}_{s1}.block.txt"),
-                      ).to_csv(merge_file, header=False, index=False, sep="\t", mode="a")
+
+        if max_score := get_max_score(os.path.join(step2, file_template.format(s1,s2)),
+                                    os.path.join(step2, file_template.format(s2,s1))):
+            max_score.to_csv(merge_file, header=False, index=False, sep="\t", mode="a")
 
     command = f"mcl {merge_file} --abc -o {network_file}"
     run_command(command)
@@ -103,6 +105,8 @@ def extract_ortho_group(abspath):
 def get_max_score(network1, network2):
     n1 = read_table(network1)
     n2 = read_table(network2)
+    if n1.shape[0] == 0 or n2.shape[0] == 0:
+        return
     n1["combine"] = n1["seq_id"].str.cat(n1["tad_name"], sep="-")
     n2["combine"] = n2["tad_name"].str.cat(n2["seq_id"], sep="-")
     n1 = n1.iloc[:, 2:]
@@ -115,7 +119,7 @@ def get_max_score(network1, network2):
     return data
 
 
-def network_construct(workdir):
+def network_construct(workdir,need_syn):
     options.mode.chained_assignment = None
     abs_path = os.path.abspath(workdir)
     run_dir = os.path.join(abs_path, "Step3")
@@ -125,6 +129,6 @@ def network_construct(workdir):
     Result = os.path.join(abs_path, "Result")
     if not os.path.exists(Result):
         os.mkdir(Result)
-    sub_network_construct(abs_path)
+    sub_network_construct(abs_path,need_syn)
 
     extract_ortho_group(abs_path)
