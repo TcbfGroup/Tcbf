@@ -19,7 +19,7 @@ def sub_network_construct(workdir,need_syn):
     if os.path.exists(merge_file):
         os.unlink(merge_file)
     network_file = os.path.join(workdir, "Step3", "out.clean.network.txt")
-    file_template = "{}_{}.block.txt" if need_syn else "{}_{}..network.bed"
+    file_template = "{}_{}.block.txt" if need_syn else "{}_{}.network.bed"
     for s1, s2 in combinations(species, 2):
 
         if max_score := get_max_score(os.path.join(step2, file_template.format(s1,s2)),
