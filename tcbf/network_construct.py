@@ -105,7 +105,7 @@ def extract_ortho_group(abspath):
 def get_max_score(network1, network2):
     n1 = read_table(network1)
     n2 = read_table(network2)
-    if n1.shape[0] == 0 or n2.shape[0] == 0:
+    if (n1.shape[0] == 0) or (n2.shape[0] == 0):
         return
     n1["combine"] = n1["seq_id"].str.cat(n1["tad_name"], sep="-")
     n2["combine"] = n2["tad_name"].str.cat(n2["seq_id"], sep="-")
