@@ -9,7 +9,7 @@ from tcbf.run_command import run_command
 
 """
 python extract_TAD_bound.py  -t /data/A_genome_tad.txt \
--g /data/Garboreum_genome_HAU_v1.0/Lachesis_assembly_changed.fa -d 150000 -p A -o ~/data
+-g /data/Garboreum_genome_HAU_v1.0/Lachesis_assembly_changed.fa -d 80000 -p A -o ~/data
 
 """
 

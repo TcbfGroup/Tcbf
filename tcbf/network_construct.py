@@ -23,7 +23,8 @@ def sub_network_construct(workdir, need_syn):
     for s1, s2 in combinations(species, 2):
         file1 = os.path.join(step2, file_template.format(s1, s2))
         file2 = os.path.join(step2, file_template.format(s2, s1))
-        if max_score := get_max_score(file1,file2):
+        max_score = get_max_score(file1, file2)
+        if max_score is not None:
             max_score.to_csv(merge_file, header=False, index=False, sep="\t", mode="a")
 
     command = f"mcl {merge_file} --abc -o {network_file}"

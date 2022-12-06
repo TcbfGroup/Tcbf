@@ -16,7 +16,7 @@ args <- commandArgs(trailingOnly  = TRUE)
 
 syn <- args[1]
 
-tad <- args[2]
+min_align <- args[2]
 
 bound <- args[3]
 
@@ -32,7 +32,7 @@ minioverlap <-  as.integer(args[5])
 # 读取基因组map的结果
 synteny <-  arrow::read_feather(syn) %>%
   dplyr::select(seq_id,seq_id2,start2,end2) %>%
-  dplyr::filter((end2 - start2) >= 3000) %>%
+  #dplyr::filter((end2 - start2) >= min_align) %>%
   dplyr::rename(seqnames = seq_id2,
          start = start2,
          end = end2) %>%
