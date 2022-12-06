@@ -132,8 +132,7 @@ def process_tad_paris(file):
 
 
 def align_genome(query, target, workdir, threads, aligner, minioverlap,
-                 minialign_length=1000,
-                 xdist=10, ydist=10, N=4):
+                 xdist=10,ydist=10,N = 4):
     if threads <= 0:
         from multiprocessing import cpu_count
         threads = cpu_count()
@@ -141,6 +140,7 @@ def align_genome(query, target, workdir, threads, aligner, minioverlap,
     result_dir = os.path.join(workdir, "Step2")
     if not os.path.exists(result_dir):
         os.mkdir(result_dir)
+
 
     query_bound = os.path.join(workdir, "Step1", f"{query}.bound.fasta")
     target_genome = os.path.join(workdir, "Step1", f"{target}.genome.fa")
@@ -165,7 +165,9 @@ def align_genome(query, target, workdir, threads, aligner, minioverlap,
             raise TypeError(f"Wrong aligner for {aligner}!!!")
 
         command = f"tcbf_syn_process {Collinearity.name} {target_TAD} " \
-                  f" {minialign_length}  {network_out} {minioverlap}"
+                  f" {bound_bed}  {network_out} {minioverlap}"
         run_command(command)
     from tcbf.construct_synteny_block import construct_block
-    construct_block(workdir, query, target, xdist, ydist, N)
+    construct_block(workdir,query,target,xdist,ydist,N)
+
+

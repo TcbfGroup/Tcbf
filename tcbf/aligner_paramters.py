@@ -38,7 +38,7 @@ def minimap2_align(bound_query, target, output_file,threads, parameter=None):
 
         feather.write_feather(data.loc[:, need].sort_values(["seq_id", "seq_id2", "start2", "end2"]), out)
     genome1 = bound_query.replace("bound.fasta","genome.fa")
-
+    distance = 0.05
     if not parameter:
         distance = mash_distance(genome1, target)
         if distance <= 0.02:
