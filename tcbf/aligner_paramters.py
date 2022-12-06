@@ -33,6 +33,7 @@ def minimap2_align(bound_query, target, output_file,threads, parameter=None):
             map_length = 200
         else:
             map_length = 100
+        print(map_length)
         data = data.query(f"map_length >= {map_length}")
         need = "seq_id start end seq_id2 start2 end2".split()
 
