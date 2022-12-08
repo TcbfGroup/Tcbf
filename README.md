@@ -9,13 +9,15 @@
 </p>
 
 [中文 README](README.ch.md)
-
+![image](./pipeline.jpg)
 ## 📣 Introduction
 ___
 TADs are fundamental regulatory chromatin structures and are
 largely conserved across tissues and species. We developed 
 a python pipeline Tcbf to identify the conservative TAD boundary between
 multiple genome.
+
+
 ___
 ## ✨ Pre-requisite:
 ### [MCL](https://github.com/micans/mcl)

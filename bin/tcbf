@@ -8,6 +8,8 @@ from tcbf.check_depend import Check_dependencies
 from tcbf.Each_group_synteny import plot_synteny
 # from tcbf.visualization.circos import plot_circos
 
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="pandas")
 
 @click.group()
 def tcbf():
