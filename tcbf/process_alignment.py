@@ -132,7 +132,7 @@ def process_tad_paris(file):
 
 
 def align_genome(query, target, workdir, threads, aligner, minioverlap,
-                 xdist=10,ydist=10,N = 4):
+                 xdist=15,ydist=15,N = 4):
     if threads <= 0:
         from multiprocessing import cpu_count
         threads = cpu_count()

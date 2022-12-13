@@ -1,4 +1,4 @@
-from setuptools import setup,Extension
+from setuptools import setup
 
 setup(name = "tcbf",
       description='Tcbf identify the conservative TAD boundary between multipy species',

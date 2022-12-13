@@ -4,13 +4,6 @@ from tcbf.run_command import run_command
 from pandas import read_table
 import pyarrow.feather as feather
 
-aligner_paramter = {
-
-    "minimap2": {"near": "-cx asm5",
-                 "medium": "-cx asm10",
-                 "far": "-cx asm20"},
-}
-
 
 def mash_distance(genome1, genome2):
     if not os.path.exists(genome1 + ".msh"):
@@ -22,15 +15,16 @@ def mash_distance(genome1, genome2):
 
 
 def minimap2_align(bound_query, target, output_file, threads, parameter=None):
-    def process_minimap_result(paf_file, out, distance):
-        col_names = "seq_id length start end strand seq_id2 length2 start2 end2 map_match map_length map_quality".split()
+    def process_minimap_result(paf_file, out, genetics_distance):
+        col_names = "seq_id length start end strand seq_id2 " \
+                    "length2 start2 end2 map_match map_length map_quality".split()
 
         data = read_table(paf_file, header=None, names=col_names, usecols=range(12))
-        if distance <= 0.02:
+        if genetics_distance <= 0.02:
             map_length = 3000
-        elif distance <= 0.08:
+        elif genetics_distance <= 0.08:
             map_length = 1000
-        elif distance <= 0.15:
+        elif genetics_distance <= 0.15:
             map_length = 200
         else:
             map_length = 100
@@ -41,9 +35,9 @@ def minimap2_align(bound_query, target, output_file, threads, parameter=None):
         feather.write_feather(data.loc[:, need].sort_values(["seq_id", "seq_id2", "start2", "end2"]), out)
 
     genome1 = bound_query.replace("bound.fasta", "genome.fa")
-    distance = 0.05
+    distance = mash_distance(genome1, target)
     if not parameter:
-        distance = mash_distance(genome1, target)
+
         if distance <= 0.02:
             parameter = " -x asm5 "
         elif distance <= 0.08:

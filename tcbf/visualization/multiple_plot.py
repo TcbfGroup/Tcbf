@@ -89,9 +89,10 @@ def plot_heatmap(ax, matrix, region,chrom,start,end,bound,TAD_pos,genome):
                 si = 0
             if ei > n - 1:
                 ei = n - 1
+            # print("111")
+            # if ei - si < 2:
+            #     continue
 
-            if ei - si < 2:
-                continue
             syn.append([[x[:-1, :-1][n - 1 - si, si],region[1][0]],
                         [x[:-1, :-1][n - 1 - ei, ei], region[1][0]],
                         ])
@@ -147,17 +148,17 @@ def plot_syn(ax, point1, point2):
 clr = cooler.Cooler("/root/data/D5.cool")
 chrom1 = "Chr05"
 start1 = 20.68e+6
-end1 = 25.62e+6
+end1 = 35.62e+6
 
 M = clr.matrix(balance=False, sparse=False).fetch((chrom1, start1, end1))
 M[np.isnan(M)] = 0
 
-clr2 = cooler.Cooler("/data/A2.cool")
-chrom2 = "Chr02"
-start2 = 30.64e+6
-end2 = 35.99e+6
-M2 = clr2.matrix(balance=False, sparse=False).fetch((chrom2, start2, end2))
-M2[np.isnan(M2)] = 0
+# clr2 = cooler.Cooler("/data/A2.cool")
+# chrom2 = "Chr02"
+# start2 = 30.64e+6
+# end2 = 35.99e+6
+# M2 = clr2.matrix(balance=False, sparse=False).fetch((chrom2, start2, end2))
+# M2[np.isnan(M2)] = 0
 
 res = clr.binsize
 heatmap_pos1 = [0, 0, 1, 1]
@@ -168,21 +169,6 @@ h_ax = fig.add_axes(heatmap_pos1)
 
 syn1 = plot_heatmap(h_ax, M, ([0.1, 0.9], [0, 0.4]),chrom1,start1,end1,"/root/run/Step1/D5.bound.bed",
                     "/root/data/D5.txt","D5")
-syn2 = plot_heatmap(h_ax, M2, ([0.1, 0.9], [0.45, 0.85]),chrom2,start2,end2,"/root/run/Step1/A2.bound.bed",
-                    "/root/data/A2.txt","A2")
+# syn2 = plot_heatmap(h_ax, M2, ([0.1, 0.9], [0.45, 0.85]),chrom2,start2,end2,"/root/run/Step1/A2.bound.bed",
 
-button = st.button("rerun")
-if button:
-    st.experimental_rerun()
-
-
-for line in zip(syn1,syn2):
-    plot_syn(h_ax,line[0],line[1])
-
-
-    # st.write(line)
-h_ax.set_xlim(0, 1)
-h_ax.set_ylim(0, 1)
-h_ax.set_axis_off()
-
-st.pyplot(fig)
+print(syn1)

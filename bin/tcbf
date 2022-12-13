@@ -5,25 +5,29 @@ from tcbf.extract_TAD_bound import extract_TAD_boundary
 from tcbf.process_alignment import align_genome
 from tcbf.network_construct import network_construct
 from tcbf.check_depend import Check_dependencies
-from tcbf.Each_group_synteny import plot_synteny
-# from tcbf.visualization.circos import plot_circos
+# from tcbf.Each_group_synteny import plot_synteny
+from tcbf.visualization.plot_tad_structure import plot_synteny
 
 import warnings
-warnings.filterwarnings("ignore", category=UserWarning, module="pandas")
 
-@click.group()
+
+warnings.filterwarnings("ignore")
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+
+@click.group(context_settings=CONTEXT_SETTINGS)
 def tcbf():
     Check_dependencies()
 
 
 @tcbf.command()
 @click.option("-c", '--config', type=click.Path(exists=True), help="Config file ", required=True)
-@click.option('-o', "--output", type=str, default='.', help="输出文件的目录", required=False)
+@click.option('-o', "--output", type=str,  help="输出文件的目录", required=True)
 @click.option('-p', "--processor", type=int, default=0, help="进程数", required=False)
 @click.option('-d', "--distance", type=int, default=100e+3, help="TAD边界范围", required=False)
 @click.option("-aligner", type=click.Choice(["minimap2", "lastz", "blat", "GSAlign"]), default="minimap2",
               required=False)
-@click.option("--minioverlap", type=int, default=5000)
+@click.option("--minioverlap", type=int, default=1000)
 @click.option('--only_print_command', default=False, required=False, help="只打印命令", is_flag=True)
 def run(config, output, processor, distance, aligner, minioverlap,
         only_print_command):
@@ -34,10 +38,12 @@ def run(config, output, processor, distance, aligner, minioverlap,
 
     with open(config) as f:
         for line in f:
+            if line.startswith("#") or not line:
+                continue
             genome_file, TAD_file, species_name = line.split()
             all_species.append(species_name)
             if only_print_command:
-                command = f"tcbf extract-boundary -t {TAD_file} -g {genome_file} -d {distance} -p {species_name} -o" \
+                command = f"tcbf first-extract-boundary -t {TAD_file} -g {genome_file} -d {distance} -p {species_name} -o" \
                           f" {workdir}"
                 print(command)
             else:
@@ -50,14 +56,14 @@ def run(config, output, processor, distance, aligner, minioverlap,
     print("### Step2")
     for s1, s2 in permutations(all_species, 2):
         if only_print_command:
-            command = f"tcbf process-alignment -q {s1} -t {s2} -o {workdir} --threads {processor} " \
+            command = f"tcbf second-process-alignment -q {s1} -t {s2} -o {workdir} --threads {processor} " \
                       f"-aligner minimap2 -minioverlap {minioverlap}"
             print(command)
         else:
             align_genome(s1, s2, workdir, processor, aligner, minioverlap)
     if only_print_command:
         print("### Step3")
-        command3 = f"tcbf  construct-tad-network -o {workdir}"
+        command3 = f"tcbf  third-construct-tad-network -o {workdir}"
         print(command3)
     else:
         construct_TAD_network(workdir)
@@ -69,7 +75,7 @@ def run(config, output, processor, distance, aligner, minioverlap,
 @click.option('-d', "--distance", type=int, default=150000, required=False)
 @click.option('-p', "--prefix", type=str, default=None, help="输出文件的前缀", required=True)
 @click.option('-o', "--output", type=str, default='.', help="输出文件的目录", required=False)
-def extract_boundary(tad: str,
+def first_extract_boundary(tad: str,
                      genome: str,
                      distance: int,
                      prefix: str,
@@ -84,25 +90,43 @@ def extract_boundary(tad: str,
 @click.option("--threads", type=int, help="比对的线程数", required=False, default=0)
 @click.option("-aligner", type=click.Choice(["minimap2", "lastz", "blat", "GSAlign"]), default="minimap2")
 @click.option("-minioverlap", type=int, default=5000)
-def process_alignment(query, target, output, threads, aligner, minioverlap):
+def second_process_alignment(query, target, output, threads, aligner, minioverlap):
     align_genome(query, target, output, threads, aligner, minioverlap)
 
 
 @tcbf.command()
 @click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
 @click.option('--syn', default=False, required=False, help="是否使用共线性的结果过滤", is_flag=True)
-def construct_TAD_network(output,syn):
-    network_construct(output,need_syn=syn)
+def third_construct_TAD_network(output, syn):
+    network_construct(output, need_syn=syn)
+
+
+# @tcbf.command()
+# @click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
+# @click.option("--boundary", multiple=True, required=True)
+# @click.option("--plot", required=True)
+# def plot_syn(output, boundary, plot):
+#     plot_synteny(output, boundary, plot)
+
 
 
 @tcbf.command()
 @click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
-@click.option("--boundary", multiple=True, required=True)
-@click.option("--plot", required=True)
-def plot_syn(output, boundary, plot):
-    plot_synteny(output, boundary, plot)
-
-
+@click.option( "--reference", type=str, help="参考物种的名称", required=True)
+@click.option( "--chrom", type=str, help="染色体", required=True)
+@click.option( "--start", type=int, help="起始坐标", required=True)
+@click.option( "--end", type=int, help="结束坐标", required=True)
+@click.option( "--plot", type=str, help="输出的图像名称", required=True)
+@click.argument("order", nargs = -1)
+def plot_syn_pair(output,reference,chrom,start,end,plot,order):
+    if not order:
+        from tcbf.network_construct import get_species
+        order = get_species(workdir=output)
+        order.remove(reference)
+        order.insert(0,reference)
+    if (not plot.endswith("jpg")) and (not plot.endswith("pdf")):
+        plot += ".pdf"
+    plot_synteny(output,reference,chrom,start,end,order,plot)
 # @tcbf.command()
 # @click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
 # @click.option("--reference", required=True)
