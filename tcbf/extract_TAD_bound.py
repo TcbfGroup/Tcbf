@@ -33,7 +33,6 @@ class TAD:
         self.distance = distance
         self.length = self.end - self.start + 1
 
-
         self._left_coord = (max(0, self.start - self.distance),
                             self.start + self.distance)
         self._right_coord = (max(0, self.end - self.distance),
@@ -107,7 +106,7 @@ class TADs:
         for line in tad_table.groupby("chromosome"):
             data = []
             tad_info = []
-            line[1].reset_index(drop=True,inplace=True)
+            line[1].reset_index(drop=True, inplace=True)
             for info in line[1].itertuples():
                 tad = TAD(*list(info[1:]),
                           distance=distance,
@@ -149,7 +148,9 @@ class TADs:
         s2.columns = s1.columns
         self.TAD_bound_table = pd.concat([s1, s2], axis=0).drop_duplicates().sort_values(["chromosome", "start"]). \
             reset_index(drop=True)
-        self.TAD_bound_table = self.TAD_bound_table.groupby("chromosome").apply(lambda x: pd.DataFrame(merge(x.iloc[:, 1:].apply(tuple, axis=1).to_list()))).reset_index().iloc[:, [0, 2, 3]]
+        self.TAD_bound_table = self.TAD_bound_table.groupby("chromosome").apply(
+            lambda x: pd.DataFrame(merge(x.iloc[:, 1:].apply(tuple, axis=1).to_list()))).reset_index().iloc[:,
+                               [0, 2, 3]]
         self.TAD_bound_table.columns = ("chromosome", "start", "end")
 
         self.TAD_bound_table.index = self.TAD_bound_table.index.set_names(["tad_name"])
@@ -165,8 +166,7 @@ class TADs:
             out_fasta.write(f">{tad_bound[1]} {tad_bound[2:]}\n{seq}\n")
 
 
-
-def merge( intervals):
+def merge(intervals):
     """
     :type intervals: List[Interval]
     :rtype: List[Interval]
@@ -186,7 +186,7 @@ def merge( intervals):
     ends = []
 
     for interval in intervals:
-        start,end = interval
+        start, end = interval
         starts.append(start)
         ends.append(end)
 
@@ -206,11 +206,13 @@ def merge( intervals):
 
     return results
 
+
 def extract_TAD_boundary(tad: str,
                          genome: str,
                          distance: int,
                          prefix: str,
-                         output: str):
+                         output: str,
+                         skip: bool = False):
     if not os.path.exists(output):
         os.mkdir(output)
     if not os.path.exists(os.path.join(output, "Step1")):
@@ -218,9 +220,9 @@ def extract_TAD_boundary(tad: str,
 
     output = os.path.join(output, "Step1")
     genome_file = os.path.join(output, f"{prefix}.genome.fa")
-
-    add_prefix(genome, prefix, genome_file)
-    mash_genome(genome_file)
+    if not skip:
+        add_prefix(genome, prefix, genome_file)
+        mash_genome(genome_file)
     G1_TAD = TADs(tad,
                   genome_file,
                   distance=distance,
@@ -245,8 +247,9 @@ def main(tad: str,
          genome: str,
          distance: int,
          prefix: str,
-         output: str):
-    extract_TAD_boundary(tad, genome, distance, prefix, output)
+         output: str,
+         not_need: bool):
+    extract_TAD_boundary(tad, genome, distance, prefix, output, not_need)
 
 
 if __name__ == '__main__':

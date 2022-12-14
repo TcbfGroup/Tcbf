@@ -10,7 +10,6 @@ from tcbf.visualization.plot_tad_structure import plot_synteny
 
 import warnings
 
-
 warnings.filterwarnings("ignore")
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -22,7 +21,7 @@ def tcbf():
 
 @tcbf.command()
 @click.option("-c", '--config', type=click.Path(exists=True), help="Config file ", required=True)
-@click.option('-o', "--output", type=str,  help="输出文件的目录", required=True)
+@click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
 @click.option('-p', "--processor", type=int, default=0, help="进程数", required=False)
 @click.option('-d', "--distance", type=int, default=100e+3, help="TAD边界范围", required=False)
 @click.option("-aligner", type=click.Choice(["minimap2", "lastz", "blat", "GSAlign"]), default="minimap2",
@@ -43,7 +42,8 @@ def run(config, output, processor, distance, aligner, minioverlap,
             genome_file, TAD_file, species_name = line.split()
             all_species.append(species_name)
             if only_print_command:
-                command = f"tcbf first-extract-boundary -t {TAD_file} -g {genome_file} -d {distance} -p {species_name} -o" \
+                command = f"tcbf first-extract-boundary -t {TAD_file} -g {genome_file} -d {distance} -p " \
+                          f"{species_name} -o" \
                           f" {workdir}"
                 print(command)
             else:
@@ -66,7 +66,7 @@ def run(config, output, processor, distance, aligner, minioverlap,
         command3 = f"tcbf  third-construct-tad-network -o {workdir}"
         print(command3)
     else:
-        construct_TAD_network(workdir)
+        network_construct(workdir, True)
 
 
 @tcbf.command()
@@ -75,12 +75,14 @@ def run(config, output, processor, distance, aligner, minioverlap,
 @click.option('-d', "--distance", type=int, default=150000, required=False)
 @click.option('-p', "--prefix", type=str, default=None, help="输出文件的前缀", required=True)
 @click.option('-o', "--output", type=str, default='.', help="输出文件的目录", required=False)
+@click.option("--skip-mash", type=bool, default=False, help="跳过", required=False)
 def first_extract_boundary(tad: str,
-                     genome: str,
-                     distance: int,
-                     prefix: str,
-                     output: str):
-    extract_TAD_boundary(tad, genome, distance, prefix, output)
+                           genome: str,
+                           distance: int,
+                           prefix: str,
+                           output: str,
+                           skip_mash):
+    extract_TAD_boundary(tad, genome, distance, prefix, output, skip_mash)
 
 
 @tcbf.command()
@@ -109,24 +111,25 @@ def third_construct_TAD_network(output, syn):
 #     plot_synteny(output, boundary, plot)
 
 
-
 @tcbf.command()
 @click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
-@click.option( "--reference", type=str, help="参考物种的名称", required=True)
-@click.option( "--chrom", type=str, help="染色体", required=True)
-@click.option( "--start", type=int, help="起始坐标", required=True)
-@click.option( "--end", type=int, help="结束坐标", required=True)
-@click.option( "--plot", type=str, help="输出的图像名称", required=True)
-@click.argument("order", nargs = -1)
-def plot_syn_pair(output,reference,chrom,start,end,plot,order):
+@click.option("--reference", type=str, help="参考物种的名称", required=True)
+@click.option("--chrom", type=str, help="染色体", required=True)
+@click.option("--start", type=int, help="起始坐标", required=True)
+@click.option("--end", type=int, help="结束坐标", required=True)
+@click.option("--plot", type=str, help="输出的图像名称", required=True)
+@click.argument("order", nargs=-1)
+def plot_syn_pair(output, reference, chrom, start, end, plot, order):
     if not order:
         from tcbf.network_construct import get_species
         order = get_species(workdir=output)
         order.remove(reference)
-        order.insert(0,reference)
+        order.insert(0, reference)
     if (not plot.endswith("jpg")) and (not plot.endswith("pdf")):
         plot += ".pdf"
-    plot_synteny(output,reference,chrom,start,end,order,plot)
+    plot_synteny(output, reference, chrom, start, end, order, plot)
+
+
 # @tcbf.command()
 # @click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
 # @click.option("--reference", required=True)
