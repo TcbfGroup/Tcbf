@@ -287,7 +287,7 @@ def get_pairwise_genome_region(workdir, reference,
 
     res = {}
     for index in range(1, pair.shape[1]):
-        pair_genome_region = get_pair_TAD_boundary_region("/root/run", pair.iloc[:, [0, index]], only_primary)
+        pair_genome_region = get_pair_TAD_boundary_region(workdir, pair.iloc[:, [0, index]], only_primary)
 
         res[pair.columns[index]] = pair_genome_region
     return res

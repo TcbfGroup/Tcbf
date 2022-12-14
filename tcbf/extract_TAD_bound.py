@@ -149,9 +149,14 @@ class TADs:
         s2.columns = s1.columns
         self.TAD_bound_table = pd.concat([s1, s2], axis=0).drop_duplicates().sort_values(["chromosome", "start"]). \
             reset_index(drop=True)
+        self.TAD_bound_table = self.TAD_bound_table.groupby("chromosome").apply(lambda x: pd.DataFrame(merge(x.iloc[:, 1:].apply(tuple, axis=1).to_list()))).reset_index().iloc[:, [0, 2, 3]]
+        self.TAD_bound_table.columns = ("chromosome", "start", "end")
+
         self.TAD_bound_table.index = self.TAD_bound_table.index.set_names(["tad_name"])
+
         self.TAD_bound_table.reset_index(inplace=True)
         self.TAD_bound_table["tad_name"] = self.prefix + "_bound_" + self.TAD_bound_table["tad_name"].astype(str)
+
         self.TAD_bound_table.to_csv(handle, index=False)
 
     def extract_bound_seq(self, out_fasta):
@@ -159,6 +164,47 @@ class TADs:
             seq = self._extract_seq(*tad_bound[2:])
             out_fasta.write(f">{tad_bound[1]} {tad_bound[2:]}\n{seq}\n")
 
+
+
+def merge( intervals):
+    """
+    :type intervals: List[Interval]
+    :rtype: List[Interval]
+    """
+
+    # genearl idea:
+    # sort the first element of all intervals as [starts]
+    # sort the second element of all intervals as [ends]
+    # e.g. [1,3], [5,8], [4,7], [9, 10] becomes
+    # starts=[1,4,5,9], ends=[3,7,8,10]
+    # then compare ends[i] with start[i+1]
+
+    if len(intervals) <= 1:
+        return intervals
+
+    starts = []
+    ends = []
+
+    for interval in intervals:
+        start,end = interval
+        starts.append(start)
+        ends.append(end)
+
+    starts.sort()
+    ends.sort()
+    results = []
+    start = starts[0]
+    end = ends[0]
+    for i in range(len(intervals)):
+        try:
+            if ends[i] < starts[i + 1]:
+                results.append((start, end))
+                start = starts[i + 1]
+            end = ends[i + 1]
+        except IndexError:  # in this case, we have reached the last element of starts and ends
+            results.append((start, end))
+
+    return results
 
 def extract_TAD_boundary(tad: str,
                          genome: str,
