@@ -5,7 +5,7 @@ from tcbf.extract_TAD_bound import extract_TAD_boundary
 from tcbf.process_alignment import align_genome
 from tcbf.network_construct import network_construct
 from tcbf.check_depend import Check_dependencies
-# from tcbf.Each_group_synteny import plot_synteny
+
 from tcbf.visualization.plot_tad_structure import plot_synteny
 
 import warnings
@@ -72,10 +72,10 @@ def run(config, output, processor, distance, aligner, minioverlap,
 @tcbf.command()
 @click.option("-t", '--TAD', type=click.Path(exists=True), help="TAD file ", required=True)
 @click.option("-g", '--genome', type=click.Path(exists=True), help="genome sequence file  ", required=True)
-@click.option('-d', "--distance", type=int, default=150000, required=False)
+@click.option('-d', "--distance", type=int, default=40000, required=False)
 @click.option('-p', "--prefix", type=str, default=None, help="输出文件的前缀", required=True)
 @click.option('-o', "--output", type=str, default='.', help="输出文件的目录", required=False)
-@click.option("--skip-mash", type=bool, default=False, help="跳过", required=False)
+@click.option("--skip-mash", type=bool, default=False, help="跳过", required=False,is_flag=True)
 def first_extract_boundary(tad: str,
                            genome: str,
                            distance: int,
