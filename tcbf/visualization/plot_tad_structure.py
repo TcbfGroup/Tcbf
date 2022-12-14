@@ -293,7 +293,7 @@ def get_pairwise_genome_region(workdir, reference,
     return res
 
 
-from functools import lru_cache
+
 
 
 def plot_SV(workdir, name1, name2, ax, x1_ranges, x2_ranges,
@@ -387,8 +387,8 @@ def plot_main(workdir,genome,chrom,start,end,species_order,):
                                                     reference=genome,
                                                     chrom=chrom, start=start, end=end)
 
-    reference_span = end - start
-    var = max([i[0][2] - i[0][1] for i in pair_genome_region.values() if i[0]])
+    # reference_span = end - start
+    # var = max([i[0][2] - i[0][1] for i in pair_genome_region.values() if i[0]])
     # max_span = max(reference_span, var)
     species_num = len(species_order)
     one_space = 1 / species_num

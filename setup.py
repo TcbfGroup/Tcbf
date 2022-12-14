@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name = "tcbf",
-      description='Tcbf identify the conservative TAD boundary between multipy species',
+      description='Tcbf used to identify the conservative TAD boundary between multipy species',
       author = "He Xin",
       license= 'MIT License',
       license_files = ('LICENSE',),

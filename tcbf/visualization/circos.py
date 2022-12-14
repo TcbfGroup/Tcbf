@@ -132,10 +132,5 @@ def plot_circos(workdir, reference,output):
                            rlim=[0, 100],
 
                            facecolor=color[i-1])
-
-
-
-
-
     circle.figure.savefig(output)
 

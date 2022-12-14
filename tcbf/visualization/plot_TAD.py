@@ -274,52 +274,39 @@ vis.plot_TAD("/root/data/D5.txt")
 st.pyplot(vis.fig)
 #
 
-#
-#
-# vis = Triangle('/root/A2.balance.Chr1.cool::40000', '1', 2e+6, 16.28e+6, correct=False)
-# vmin = int(vis.matrix.min())
-#
-# vmax = int(np.percentile(vis.matrix[vis.matrix.nonzero()], 95))
-# vmin = st.slider("min value", vmin, vmax, vmin)
-# vmax = st.slider("max value", vmin, vmax, vmax)
-# if vmax < vmin:
-#     st.warning("max value is lower than min value")
-#     st.stop()
-# vis.matrix_plot(vmin=vmin, vmax=vmax, colormap='RdYlBu_r')
-#
-# st.pyplot(vis.fig)
-#
-#
-# # fig, (ax1, ax2) = plt.subplots(2,sharex=True)
-# # fig.suptitle('Vertically stacked subplots')
-# # ax1.plot(x, y)
-# # ax2.plot(x+1, -y)
-# # st.pyplot(fig)
-# def plot_TAD(ax, cool, chrom, start, end):
-#     clr = cooler.Cooler(cool)
-#     M = clr.matrix(balance=False, sparse=False).fetch((chrom, start, end))
-#     M[np.isnan(M)] = 0
-#     n = M.shape[0]
-#     t = np.array([[1, 0.5], [-1, 0.5]])
-#     A = np.dot(np.array([(i[1], i[0]) for i in itertools.product(range(n, -1, -1), range(0, n + 1, 1))]), t)
-#     cmap = 'RdYlBu_r'
-#     x = A[:, 1].reshape(n + 1, n + 1)
-#     y = A[:, 0].reshape(n + 1, n + 1)
-#     y[y < 0] = -y[y < 0]
-#     vmax = np.percentile(M[M.nonzero()], 95)
-#     vmin = M.min()
-#     ax.pcolormesh(x, y, np.flipud(M), cmap=cmap, vmin=vmin, vmax=vmax)
-#
-#
+
+
+
+# fig, (ax1, ax2) = plt.subplots(2,sharex=True)
+# fig.suptitle('Vertically stacked subplots')
+# ax1.plot(x, y)
+# ax2.plot(x+1, -y)
+# st.pyplot(fig)
+def plot_TAD(ax, cool, chrom, start, end):
+    clr = cooler.Cooler(cool)
+    M = clr.matrix(balance=False, sparse=False).fetch((chrom, start, end))
+    M[np.isnan(M)] = 0
+    n = M.shape[0]
+    t = np.array([[1, 0.5], [-1, 0.5]])
+    A = np.dot(np.array([(i[1], i[0]) for i in itertools.product(range(n, -1, -1), range(0, n + 1, 1))]), t)
+    cmap = 'RdYlBu_r'
+    x = A[:, 1].reshape(n + 1, n + 1)
+    y = A[:, 0].reshape(n + 1, n + 1)
+    y[y < 0] = -y[y < 0]
+    vmax = np.percentile(M[M.nonzero()], 95)
+    vmin = M.min()
+    ax.pcolormesh(x, y, np.flipud(M), cmap=cmap, vmin=vmin, vmax=vmax)
+
+
 # x = np.linspace(0, 2 * np.pi, 400)
 # y = np.sin(x ** 2)
 # fig = plt.figure(figsize=(8,10))
 # gs = fig.add_gridspec(3, hspace=0)
 # axs = gs.subplots(sharex=False)
-# # plot_TAD(axs[0], "/root/A2.balance.Chr1.cool::40000", "1", 10e+6, 20e+6)
+# plot_TAD(axs[0], "/root/data/D5.cool::40000", "1", 10e+6, 20e+6)
 #
 # plot_syn(axs[1])
-# # plot_TAD(axs[2], "/root/A2.balance.Chr1.cool::40000", "1", 20e+6, 30e+6)
+# plot_TAD(axs[2], "/root/data/D5.cool::40000", "1", 20e+6, 30e+6)
 #
 # for ax in axs.flat:
 #     ax.label_outer()
