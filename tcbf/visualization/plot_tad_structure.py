@@ -325,13 +325,9 @@ def plot_SV(workdir, name1, name2, ax, x1_ranges, x2_ranges,
     # st.stop()
 
 
-def plot_boundary_pair(workdir, ax, reference, boundary_position, species_order, style="curve"):
+def plot_boundary_pair(workdir, ax, reference, boundary_position, species_order, style="curve",
+                       color = "#e8effb"):
     from itertools import product
-    # file = os.path.join(workdir, "Result", "one_to_many", f"{reference}.txt")
-    # data = read_table(file)
-    # reference_boundary = boundary_position.get(reference)
-    # data = data[data[reference].isin(reference_boundary.keys())].loc[:, species_order]
-    # st.write(data)
     all_need_boundary = set(j for i in boundary_position.values() for j in list(i.keys()))
     file = os.path.join(workdir,"Result","TAD_groups.tsv")
     import re
@@ -351,8 +347,6 @@ def plot_boundary_pair(workdir, ax, reference, boundary_position, species_order,
     for s in species_order[1:]:
         tmp = data.loc[:, [reference, s]].dropna().apply(lambda x:x.str.strip()).applymap(lambda x: x.split(";")).apply(
             lambda x: list(product(*x)), axis=1).to_list()
-        # st.write(data.loc[:, [reference, s]].dropna())
-
         pair = [j for i in tmp for j in i]
 
         for s1, s2 in pair:
@@ -372,7 +366,7 @@ def plot_boundary_pair(workdir, ax, reference, boundary_position, species_order,
                 x, y, width, height = x2
                 point2 = (x, y), (x + width, y)
 
-                plot_syn(ax, point1, point2, style=style, zorder=2)
+                plot_syn(ax, point1, point2, style=style, zorder=2,color=color)
 
         reference = s
 
