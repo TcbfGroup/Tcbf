@@ -1,6 +1,6 @@
 <h1 align="center">Tcbf</h1>
 <p align="center">
-    <em> ❤️ Tcbf = Topological association structure(TAD) Conservative Boundary Finder</em>
+    <em> ❤️ Tcbf = Topological association domain(TAD) Conservative Boundary Finder</em>
 </p>
 <p>
     <a href="https://opensource.org/licenses/MIT">
