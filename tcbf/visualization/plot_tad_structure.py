@@ -366,7 +366,7 @@ def plot_boundary_pair(workdir, ax, reference, boundary_position, species_order,
                 x, y, width, height = x2
                 point2 = (x, y), (x + width, y)
 
-                plot_syn(ax, point1, point2, style=style, zorder=2,color=color)
+                plot_syn(ax, point1, point2, style=style, zorder=2,color=color,alpha=0.4)
 
         reference = s
 

@@ -132,7 +132,7 @@ def process_tad_paris(file):
 
 
 def align_genome(query, target, workdir, threads, aligner, minioverlap,
-                 xdist=15,ydist=15,N = 4):
+                 xdist=10,ydist=10,N = 4):
     if threads <= 0:
         from multiprocessing import cpu_count
         threads = cpu_count()
@@ -149,7 +149,7 @@ def align_genome(query, target, workdir, threads, aligner, minioverlap,
     target_TAD = os.path.join(workdir, "Step1", f"{target}.TAD.csv")
 
     network_out = os.path.join(result_dir, f"{query}_{target}.network.bed")
-    # conserved_file = os.path.join(result_dir, f"{query}_{target}.conserved.bed")
+
 
     with NamedTemporaryFile("w+t") as Collinearity:
         if aligner == "nucmer":

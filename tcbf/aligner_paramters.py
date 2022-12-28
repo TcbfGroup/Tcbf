@@ -21,14 +21,14 @@ def minimap2_align(bound_query, target, output_file, threads, parameter=None):
 
         data = read_table(paf_file, header=None, names=col_names, usecols=range(12))
         if genetics_distance <= 0.02:
-            map_length = 3000
-        elif genetics_distance <= 0.08:
+            map_length = 5000
+        elif genetics_distance <= 0.2:
             map_length = 1000
-        elif genetics_distance <= 0.15:
-            map_length = 200
+        elif genetics_distance <= 0.5:
+            map_length = 500
         else:
-            map_length = 100
-        print(map_length)
+            map_length = 200
+
         data = data.query(f"map_length >= {map_length}")
         need = "seq_id start end seq_id2 start2 end2".split()
 
@@ -40,9 +40,9 @@ def minimap2_align(bound_query, target, output_file, threads, parameter=None):
 
         if distance <= 0.02:
             parameter = " -x asm5 "
-        elif distance <= 0.08:
+        elif distance <= 0.2:
             parameter = " -x asm10 "
-        elif distance <= 0.15:
+        elif distance <= 0.5:
             parameter = " -x asm20 "
         else:
             parameter = ""
