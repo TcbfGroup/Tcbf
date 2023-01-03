@@ -118,8 +118,6 @@ def construct_block(workdir,query,target,xdist,ydist,N):
 
     alignments = read_alignments(workdir,query,target)
     cluster = batch_scan(alignments,xdist=xdist,ydist = ydist,N = N)
-
-    cluster = [i for i in cluster if max(j[2] for j in i) >= 3000]
     result_file = os.path.join(workdir,"Step2",f"{query}_{target}.block.txt")
     with open(result_file,"w")as f:
         f.write("seq_id\ttad_name\tscore\n")

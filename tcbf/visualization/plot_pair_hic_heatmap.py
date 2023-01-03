@@ -122,5 +122,26 @@ end = 12.8e+6
 query_cool = f"/data/{query}.cool"
 target_cool = f"/data/{target}.cool"
 
-st.pyplot(plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, target_cool))
+# st.pyplot(plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, target_cool))
+fig, ax = plt.subplots(figsize=(9, 9))
+query_cool = "/data/cool/peanut.cool::20000"
+chrom = "13"
+start = 119480000
+end = 122200000
+x_range = (0, 1)
+plot_heatmap(ax, query, query_cool, chrom, start, end, xrange=(0, 1), yrange=(0.21, 1), up_down=1)
+ax.set_xlim(-0.2, 1)
+ax.set_ylim(-1, 1)
+# st.pyplot(fig)
 
+
+# fig, ax = plt.subplots(figsize=(9, 9))
+query_cool = "/data/cool/common_bean.cool::20000"
+chrom = "8"
+start = 7420000
+end = 8040000
+x_range = (0, 1)
+plot_heatmap(ax, query, query_cool, chrom, start, end, xrange=(0, 1), yrange=(-0.01, -0.8), up_down=-1)
+ax.set_xlim(-0.2, 1)
+ax.set_ylim(-1, 1)
+st.pyplot(fig)
