@@ -80,25 +80,26 @@ def extract_ortho_group(abspath):
     unassign_df.to_csv(Un_Assign, sep="\t", index=False)
     count.to_csv(TAD_count, sep="\t")
 
-    one_to_many = os.path.join(abspath, "Result", "one_to_many")
-    if not os.path.exists(one_to_many):
-        os.mkdir(one_to_many)
-    all_species = get_species(abspath)
-
-    merge = concat([data, unassign_df])
-    for species in all_species:
-        boundary_file = os.path.join(abspath, "Step1", f"{species}.bound.bed")
-        reference_TAD_boundary_order = read_csv(boundary_file)["tad_name"]
-        tmp = merge.dropna(subset=[species])
-        rr = []
-        for i in reference_TAD_boundary_order:
-            rr.append(tmp[tmp[species].str.contains(f"{i}(;|$)")])
-
-        result_file = os.path.join(one_to_many, f"{species}.txt")
-        res = concat(rr)
-        res.pop(species)
-        res.insert(0, species, list(reference_TAD_boundary_order))
-        res.to_csv(result_file, index=False, sep="\t")
+    #
+    # one_to_many = os.path.join(abspath, "Result", "one_to_many")
+    # if not os.path.exists(one_to_many):
+    #     os.mkdir(one_to_many)
+    # all_species = get_species(abspath)
+    #
+    # merge = concat([data, unassign_df])
+    # for species in all_species:
+    #     boundary_file = os.path.join(abspath, "Step1", f"{species}.bound.bed")
+    #     reference_TAD_boundary_order = read_csv(boundary_file)["tad_name"]
+    #     tmp = merge.dropna(subset=[species])
+    #     rr = []
+    #     for i in reference_TAD_boundary_order:
+    #         rr.append(tmp[tmp[species].str.contains(f"{i}(;|$)")])
+    #
+    #     result_file = os.path.join(one_to_many, f"{species}.txt")
+    #     res = concat(rr)
+    #     res.pop(species)
+    #     res.insert(0, species, list(reference_TAD_boundary_order))
+    #     res.to_csv(result_file, index=False, sep="\t")
 
 
 def get_max_score(network1, network2):
@@ -117,6 +118,46 @@ def get_max_score(network1, network2):
     data.columns = "genome1 genome2 score".split()
     return data
 
+def construct_one_to_many(workdir,need_syn):
+    step2 = os.path.join(workdir, "Step2")
+    species = get_species(workdir)
+    file_template = "{}_{}.block.txt" if need_syn else "{}_{}.network.bed"
+    step3 = os.path.join(workdir,"Step3")
+    for s1 in species:
+
+        for s2 in species:
+            if s1 == s2:
+                continue
+            bound_file = os.path.join(workdir,"Step1",f"{s1}.bound.bed")
+            file1 = os.path.join(step2, file_template.format(s1, s2))
+            file2 = os.path.join(step2, file_template.format(s2, s1))
+            max_score = get_max_score(file1, file2)
+            boundaries = read_csv(bound_file)[["tad_name"]]
+            boundaries.columns = ["genome1"]
+            if max_score is not None:
+                max_score = max_score.iloc[:,:2]
+                m = boundaries.merge(max_score, how="left").fillna(0)
+                s = defaultdict(list)
+                for k in m.itertuples():
+                    key,value = k[1:]
+                    s[key].append(value)
+                with open(os.path.join(step3,f"{s1}-{s2}.txt"),"w")as f:
+                    for k,v in s.items():
+                        if not v[0]:
+                            f.write(f"{k}\t\n")
+                        else:
+                            f.write(f"{k}\t{';'.join(v)}\n")
+        anchor_file = [os.path.join(step3,i) for i in os.listdir(step3) if i.startswith(f"{s1}-")]
+        first = read_table(anchor_file[0],names=os.path.basename(anchor_file[0])[:-4].split("-"))
+        result = concat([read_table(i,names = i[:-4].split("-"))[[i[:-4].split("-")[1]]] for i in anchor_file[1:]],axis = 1)
+        final = concat([first,result],axis = 1)
+        final.to_csv(os.path.join(step3,f"{s1}.join.txt"),index=False,sep = "\t")
+
+
+
+
+
+
 
 def network_construct(workdir, need_syn):
     options.mode.chained_assignment = None
@@ -131,3 +172,4 @@ def network_construct(workdir, need_syn):
     sub_network_construct(abs_path, need_syn)
 
     extract_ortho_group(abs_path)
+    construct_one_to_many(workdir,need_syn)

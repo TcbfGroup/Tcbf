@@ -53,13 +53,13 @@ def plot_heatmap(ax, reference, cool, chrom, start, end, xrange, yrange, up_down
             if ei - si < 2:
                 continue
 
-            x_data = [x[:-1, :-1][n - si, si],
-                      x[:-1, :-1][n - si, ei],
-                      x[:-1, :-1][n - ei, ei]]
+            x_data = [x[:-1, :-1][n - 1-si, si],
+                      x[:-1, :-1][n - 1- si, ei],
+                      x[:-1, :-1][n - 1- ei, ei]]
 
-            y_data = [y[:-1, :-1][n - si , si],
-                      y[:-1, :-1][n - si, ei],
-                      y[:-1, :-1][n - ei, ei]]
+            y_data = [y[:-1, :-1][n -1- si , si],
+                      y[:-1, :-1][n -1- si, ei],
+                      y[:-1, :-1][n -1- ei, ei]]
 
             ax.plot(x_data, y_data, color="gray", linestyle='-',
                     linewidth=2)
@@ -111,37 +111,15 @@ def plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, ta
     return fig
 
 
-res = 40e+3
-workdir = "/root/run/"
-query = "A2"
-target = "G1"
-chrom = "Chr04"
-start = 9.32e+6
-end = 12.8e+6
+res = 20e+3
+workdir = "/data/cool/o2"
+query = "Gmax"
+target = "Pvalgaris"
+chrom = "18"
+start = 5.94e+6
+end = 9.4e+6
 
-query_cool = f"/data/{query}.cool"
-target_cool = f"/data/{target}.cool"
+query_cool = f"/data/cool/{query}.cool::20000"
+target_cool = f"/data/cool/common_bean.cool::20000"
 
-# st.pyplot(plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, target_cool))
-fig, ax = plt.subplots(figsize=(9, 9))
-query_cool = "/data/cool/peanut.cool::20000"
-chrom = "13"
-start = 119480000
-end = 122200000
-x_range = (0, 1)
-plot_heatmap(ax, query, query_cool, chrom, start, end, xrange=(0, 1), yrange=(0.21, 1), up_down=1)
-ax.set_xlim(-0.2, 1)
-ax.set_ylim(-1, 1)
-# st.pyplot(fig)
-
-
-# fig, ax = plt.subplots(figsize=(9, 9))
-query_cool = "/data/cool/common_bean.cool::20000"
-chrom = "8"
-start = 7420000
-end = 8040000
-x_range = (0, 1)
-plot_heatmap(ax, query, query_cool, chrom, start, end, xrange=(0, 1), yrange=(-0.01, -0.8), up_down=-1)
-ax.set_xlim(-0.2, 1)
-ax.set_ylim(-1, 1)
-st.pyplot(fig)
+st.pyplot(plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, target_cool))
