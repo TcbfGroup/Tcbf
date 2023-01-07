@@ -16,20 +16,19 @@ args <- commandArgs(trailingOnly  = TRUE)
 
 syn <- args[1]
 
-min_align <- args[2]
 
-bound <- args[3]
+
+bound <- args[2]
 
 #output file name
-network <- args[4]
+network <- args[3]
 
 
-minioverlap <-  as.integer(args[5])
+minioverlap <-  as.integer(args[4])
 
 # 读取基因组map的结果
 synteny <-  arrow::read_feather(syn) %>%
   dplyr::select(seq_id,seq_id2,start2,end2) %>%
-  #dplyr::filter((end2 - start2) >= min_align) %>%
   dplyr::rename(seqnames = seq_id2,
          start = start2,
          end = end2) %>%
@@ -43,7 +42,9 @@ target.bound <- read_csv(bound) %>%
   dplyr::rename(seqnames = chromosome) %>%
   as_granges()
 
-result = tibble(data.frame(find_overlaps(synteny,target.bound,minoverlap = minioverlap))) %>%
+result = tibble(data.frame(find_overlaps(synteny,target.bound,
+                        #minoverlap = minioverlap,
+                            maxgap = 80000))) %>%
   group_by(seq_id,tad_name) %>%
   summarise(score = sum(width)) %>%
   arrange(seq_id,desc(score))

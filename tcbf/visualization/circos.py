@@ -66,8 +66,7 @@ def get_TAD_position(workdir, reference, TAD_list):
     return arcdata_dict
 
 
-color = """
-#a3dbd2
+color = """#a3dbd2
 #ffe058
 #cdcae3
 #fc9f95

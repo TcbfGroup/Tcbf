@@ -113,13 +113,13 @@ def plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, ta
 
 res = 20e+3
 workdir = "/data/cool/o2"
-query = "Gmax"
+query = "Ahypogaea"
 target = "Pvalgaris"
-chrom = "18"
-start = 5.94e+6
-end = 9.4e+6
+chrom = "11"
+start =5280000
+end = 12200000
 
-query_cool = f"/data/cool/{query}.cool::20000"
+query_cool = f"/data/cool/peanut.cool::20000"
 target_cool = f"/data/cool/common_bean.cool::20000"
 
 st.pyplot(plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, target_cool))

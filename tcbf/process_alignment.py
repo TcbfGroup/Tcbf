@@ -146,7 +146,7 @@ def align_genome(query, target, workdir, threads, aligner, minioverlap,
     target_genome = os.path.join(workdir, "Step1", f"{target}.genome.fa")
 
     bound_bed = os.path.join(workdir, "Step1", f"{target}.bound.bed")
-    target_TAD = os.path.join(workdir, "Step1", f"{target}.TAD.csv")
+
 
     network_out = os.path.join(result_dir, f"{query}_{target}.network.bed")
 
@@ -164,7 +164,7 @@ def align_genome(query, target, workdir, threads, aligner, minioverlap,
         else:
             raise TypeError(f"Wrong aligner for {aligner}!!!")
 
-        command = f"tcbf_syn_process {Collinearity.name} {target_TAD} " \
+        command = f"tcbf_syn_process {Collinearity.name}  " \
                   f" {bound_bed}  {network_out} {minioverlap}"
         run_command(command)
     from tcbf.construct_synteny_block import construct_block
