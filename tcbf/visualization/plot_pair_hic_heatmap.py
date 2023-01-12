@@ -1,3 +1,5 @@
+import random
+
 from tcbf.visualization.plot_tad_structure import *
 import matplotlib.pyplot as plt
 import streamlit as st
@@ -8,7 +10,8 @@ import itertools
 
 def plot_heatmap(ax, reference, cool, chrom, start, end, xrange, yrange, up_down, orientation=1):
     clr = cooler.Cooler(cool)
-    M = clr.matrix(balance=False, sparse=False).fetch((chrom, start, end))
+
+    M = clr.matrix(balance=False).fetch((chrom, start, end))
     M[np.isnan(M)] = 0
 
     n = M.shape[0]
@@ -28,7 +31,8 @@ def plot_heatmap(ax, reference, cool, chrom, start, end, xrange, yrange, up_down
     vmax = np.percentile(M[M.nonzero()], 95)
     vmin = M.min()
     vmin, vmax = float(vmin), float(vmax)
-    vmin, vmax = st.slider("Select value", min_value=vmin, max_value=vmax, value=(vmin, vmax))
+    vmin, vmax = st.slider("Select value", min_value=vmin, max_value=vmax, value=(vmin, vmax),
+                           )
     x = coord_compression(x, x_range=xrange)
     y = coord_compression(y, x_range=yrange)
     if orientation == -1:
@@ -53,14 +57,18 @@ def plot_heatmap(ax, reference, cool, chrom, start, end, xrange, yrange, up_down
             if ei - si < 2:
                 continue
 
-            x_data = [x[:-1, :-1][n - 1-si, si],
-                      x[:-1, :-1][n - 1- si, ei],
-                      x[:-1, :-1][n - 1- ei, ei]]
-
-            y_data = [y[:-1, :-1][n -1- si , si],
-                      y[:-1, :-1][n -1- si, ei],
-                      y[:-1, :-1][n -1- ei, ei]]
-
+            # x_data = [x[:-1, :-1][n-1-  si, si],
+            #           x[:-1, :-1][n- 1- si, ei],
+            #           x[:-1, :-1][n - 1- ei, ei]]
+            x_data = [x[n-  si, si],
+                      x[n- si, ei],
+                      x[n - ei, ei]]
+            # y_data = [y[:-1, :-1][n - 1 - si , si] ,
+            #           y[:-1, :-1][n - 1 - si, ei] ,
+            #           y[:-1, :-1][n - 1 - ei, ei] ]
+            y_data = [y[n  - si , si] ,
+                      y[n  - si, ei] ,
+                      y[n  - ei, ei] ]
             ax.plot(x_data, y_data, color="gray", linestyle='-',
                     linewidth=2)
             m = abs(y_data[1])
@@ -113,13 +121,17 @@ def plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, ta
 
 res = 20e+3
 workdir = "/data/cool/o2"
-query = "Ahypogaea"
 target = "Pvalgaris"
-chrom = "11"
-start =5280000
-end = 12200000
+query = "Gmax"
+chrom = "6"
+start = 6.0e+6
+end = 7e+6
 
-query_cool = f"/data/cool/peanut.cool::20000"
+query_cool= f"/data/cool/gmax.cool::20000"
 target_cool = f"/data/cool/common_bean.cool::20000"
 
-st.pyplot(plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, target_cool))
+plt = plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, target_cool)
+plt.savefig("/data/pair.pdf")
+st.pyplot(plt)
+
+
