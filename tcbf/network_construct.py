@@ -149,12 +149,12 @@ def construct_one_to_many(workdir,need_syn):
                             f.write(f"{k}\t{';'.join(v)}\n")
         anchor_file = [os.path.join(step3,i) for i in os.listdir(step3) if i.startswith(f"{s1}-")]
         first = read_table(anchor_file[0],names=os.path.basename(anchor_file[0])[:-4].split("-"))
-        if len(anchor_file) >2:
+        if len(anchor_file) >1:
             result = concat([read_table(i,names = i[:-4].split("-"))[[i[:-4].split("-")[1]]] for i in anchor_file[1:]],axis = 1)
+            final = concat([first, result], axis=1)
         else:
-            i = anchor_file[1]
-            result = read_table(i,names = i[:-4].split("-"))[[i[:-4].split("-")[1]]]
-        final = concat([first,result],axis = 1)
+            final = first
+
         final.to_csv(os.path.join(step3,f"{s1}.join.txt"),index=False,sep = "\t")
 
 
