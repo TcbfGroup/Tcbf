@@ -44,7 +44,7 @@ target.bound <- read_csv(bound) %>%
 
 result = tibble(data.frame(find_overlaps(synteny,target.bound,
                         #minoverlap = minioverlap,
-                            maxgap = 80000))) %>%
+                            maxgap = 40000))) %>%
   group_by(seq_id,tad_name) %>%
   summarise(score = sum(width)) %>%
   arrange(seq_id,desc(score))

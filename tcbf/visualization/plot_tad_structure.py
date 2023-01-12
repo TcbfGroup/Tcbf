@@ -320,6 +320,7 @@ def plot_SV(workdir, name1, name2, ax, x1_ranges, x2_ranges,
         point2 = (line[5], y2_ranges[0]), (line[6], y2_ranges[0])
 
         plot_syn(ax, point1, point2, color="yellow")
+    st.write(SV)
     # def plot_SYN(dataframe):
     #     pass
     # st.stop()

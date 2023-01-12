@@ -166,7 +166,7 @@ class TADs:
             out_fasta.write(f">{tad_bound[1]} {tad_bound[2:]}\n{seq}\n")
 
 
-def merge(intervals):
+def merge(intervals,gap = 40e+3):
     """
     :type intervals: List[Interval]
     :rtype: List[Interval]
@@ -197,7 +197,7 @@ def merge(intervals):
     end = ends[0]
     for i in range(len(intervals)):
         try:
-            if ends[i] < starts[i + 1]:
+            if (ends[i] + gap) <= starts[i + 1]:
                 results.append((start, end))
                 start = starts[i + 1]
             end = ends[i + 1]

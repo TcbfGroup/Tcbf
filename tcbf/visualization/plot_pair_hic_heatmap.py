@@ -94,6 +94,55 @@ def plot_heatmap(ax, reference, cool, chrom, start, end, xrange, yrange, up_down
     ax.pcolormesh(x, y,plot_M, cmap=cmap, vmin=vmin, vmax=vmax)
 
 
+
+def plot_gene(bed, ax, chrom, start, end, y_start, y_end, x_range, orientation=1, ):
+    def position_to_gene():
+        data = read_table(bed,usecols=(0,1,2,3))
+
+        data.columns = "chromosome start end gene ".split()
+        data["chromosome"] = data["chromosome"].astype(str)
+        data = data.query(f"chromosome == '{chrom}' & start >= {start} & end <= {end}")
+        d = data.iloc[:,1:3]
+        data.iloc[:, 1:3] = coord_compression(d.astype(float64).to_numpy(),x_range = x_range,
+                                              x_max = end,x_min=start)
+
+
+        return data.iloc[:,[3,0,1,2]]
+
+    height = y_end - y_start
+    bounds = position_to_gene()
+
+    if orientation == -1:
+        columns = bounds.columns
+        bounds.iloc[:, -2:] = x_range[1] + x_range[0] - bounds.iloc[:, -2:]
+        bounds = bounds.iloc[:, [0, 1, 3, 2]]
+        bounds.columns = columns
+
+        # tads.iloc[:, -2:] = x_range[1] + x_range[0] - tads.iloc[:, -2:]
+        # tads = tads.iloc[:, [0, 1, 3, 2]]
+        # tads.columns = columns
+
+
+
+
+    # tads["width"] = tads["end"] - tads["start"]
+    bounds["width"] = bounds["end"] - bounds["start"]
+
+    tad_collection = []
+
+    for item in bounds.itertuples():
+        rect = Rectangle(
+            (item[3], y_start),
+            item[-1], height)
+        tad_collection.append(rect)
+    tad_collection = PatchCollection(tad_collection, zorder=2, color="green")
+    ax.add_collection(tad_collection)
+
+
+
+
+
+
 def plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, target_cool):
     fig, ax = plt.subplots(figsize=(9, 9))
     x_range = (0, 1)
@@ -110,8 +159,15 @@ def plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, ta
                  orientation=orientation2)
     plot_heatmap(ax, query, query_cool, chrom, start, end, xrange=(0, 1), yrange=(0.21, 1), up_down=1)
 
+    # bed = f"/data/cool/{query}.bed"
+    # plot_gene(bed, ax, chrom, start, end, 0.2,0.21, x_range, orientation=1,)
+    # bed2 = f"/data/cool/{target}.bed"
+    # plot_gene(bed2, ax, chrom2.split("_")[1] , start2, end2, 0, 0.01, x_range, orientation=1, )
+    # plot_SV(workdir, query, target, ax, (0, 1), (0, 1), (0.2, 0.21), (0.0, 0.01),
+    #         genome1_pos=(f"{query}_{chrom}", start, end, 1),
+    #         genome2_pos=(chrom2, start2, end2, orientation2))
 
-    plot_boundary_pair(workdir, ax, query, bound_position, [query, target], style="curve")
+    plot_boundary_pair(workdir, ax, query, bound_position, [query, target], style="1")
     ax.set_xlim(-0.2, 1)
     ax.set_ylim(-1, 1)
     ax.set_axis_off()
@@ -124,14 +180,14 @@ workdir = "/data/cool/o2"
 target = "Pvalgaris"
 query = "Gmax"
 chrom = "6"
-start = 6.0e+6
-end = 7e+6
+start = 1e+6
+end = 26.81e+6
 
 query_cool= f"/data/cool/gmax.cool::20000"
 target_cool = f"/data/cool/common_bean.cool::20000"
 
 plt = plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, target_cool)
-plt.savefig("/data/pair.pdf")
+# plt.savefig("/data/pair.pdf")
 st.pyplot(plt)
 
 
