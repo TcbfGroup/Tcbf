@@ -57,10 +57,10 @@ def run(config, output, processor, distance, aligner, maxgap,
     for s1, s2 in permutations(all_species, 2):
         if only_print_command:
             command = f"tcbf second-process-alignment -q {s1} -t {s2} -o {workdir} --threads {processor} " \
-                      f"-aligner minimap2 -maxgap {minioverlap}"
+                      f"-aligner minimap2 -maxgap {maxgap}"
             print(command)
         else:
-            align_genome(s1, s2, workdir, processor, aligner, minioverlap)
+            align_genome(s1, s2, workdir, processor, aligner, maxgap)
     if only_print_command:
         print("### Step3")
         command3 = f"tcbf  third-construct-tad-network -o {workdir}"
