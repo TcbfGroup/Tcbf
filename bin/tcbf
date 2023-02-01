@@ -28,7 +28,7 @@ def tcbf():
               required=False)
 @click.option("--maxgap", type=int, default=40000)
 @click.option('--only_print_command', default=False, required=False, help="只打印命令", is_flag=True)
-def run(config, output, processor, distance, aligner, minioverlap,
+def run(config, output, processor, distance, aligner, maxgap,
         only_print_command):
     workdir = output
     all_species = []
