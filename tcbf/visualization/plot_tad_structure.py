@@ -327,7 +327,7 @@ def plot_SV(workdir, name1, name2, ax, x1_ranges, x2_ranges,
 
 
 def plot_boundary_pair(workdir, ax, reference, boundary_position, species_order, style="curve",
-                       color = "#e8effb"):
+                       color = "#eb4242"):
     from itertools import product
     all_need_boundary = set(j for i in boundary_position.values() for j in list(i.keys()))
     file = os.path.join(workdir,"Result","TAD_groups.tsv")

@@ -180,14 +180,14 @@ workdir = "/data/cool/o2"
 target = "Pvalgaris"
 query = "Gmax"
 chrom = "6"
-start = 1e+6
-end = 26.81e+6
+start = 6e+6
+end = 6.8e+6
 
 query_cool= f"/data/cool/gmax.cool::20000"
 target_cool = f"/data/cool/common_bean.cool::20000"
 
 plt = plot_pair_heat_map(workdir, query, target, chrom, start, end, query_cool, target_cool)
-# plt.savefig("/data/pair.pdf")
+plt.savefig("/data/pair2.pdf")
 st.pyplot(plt)
 
 

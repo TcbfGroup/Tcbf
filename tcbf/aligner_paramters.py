@@ -14,20 +14,22 @@ def mash_distance(genome1, genome2):
     return distance
 
 
-def minimap2_align(bound_query, target, output_file, threads, parameter=None):
-    def process_minimap_result(paf_file, out, genetics_distance):
+def minimap2_align(bound_query, target, output_file, threads,map_length = None, parameter=None):
+    def process_minimap_result(paf_file, out, genetics_distance,map_length):
         col_names = "seq_id length start end strand seq_id2 " \
                     "length2 start2 end2 map_match map_length map_quality".split()
 
         data = read_table(paf_file, header=None, names=col_names, usecols=range(12))
-        if genetics_distance <= 0.01:
-            map_length = 5000
-        elif genetics_distance <= 0.2:
-            map_length = 1000
-        elif genetics_distance <= 0.5:
-            map_length = 500
-        else:
-            map_length = 200
+        if not map_length:
+            if genetics_distance <= 0.01:
+                map_length = 5000
+            elif genetics_distance <= 0.2:
+                map_length = 500
+            elif genetics_distance <= 0.5:
+                map_length = 200
+            else:
+                map_length = 100
+
 
         data = data.query(f"map_length >= {map_length}")
         need = "seq_id start end seq_id2 start2 end2".split()
@@ -50,4 +52,4 @@ def minimap2_align(bound_query, target, output_file, threads, parameter=None):
     with NamedTemporaryFile("w+t") as paf:
         command = f"minimap2  {parameter} -t {threads}  {target} {bound_query}  > {paf.name}"
         run_command(command)
-        process_minimap_result(paf.name, output_file, distance)
+        process_minimap_result(paf.name, output_file, distance,map_length)
