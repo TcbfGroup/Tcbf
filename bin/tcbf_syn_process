@@ -24,7 +24,7 @@ bound <- args[2]
 network <- args[3]
 
 
-minioverlap <-  as.integer(args[4])
+maxgap <-  as.integer(args[4])
 
 # 读取基因组map的结果
 synteny <-  arrow::read_feather(syn) %>%
@@ -44,7 +44,7 @@ target.bound <- read_csv(bound) %>%
 
 result = tibble(data.frame(find_overlaps(synteny,target.bound,
                         #minoverlap = minioverlap,
-                            maxgap = 40000))) %>%
+                            maxgap = maxgap))) %>%
   group_by(seq_id,tad_name) %>%
   summarise(score = sum(width)) %>%
   arrange(seq_id,desc(score))

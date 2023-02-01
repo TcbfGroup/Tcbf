@@ -131,7 +131,7 @@ def process_tad_paris(file):
 #                 process_nucmer_coord(coord.name, output)
 
 
-def align_genome(query, target, workdir, threads, aligner, minioverlap,
+def align_genome(query, target, workdir, threads, aligner, maxgap,
                  xdist=10,ydist=10,N = 3):
     if threads <= 0:
         from multiprocessing import cpu_count
@@ -165,7 +165,7 @@ def align_genome(query, target, workdir, threads, aligner, minioverlap,
             raise TypeError(f"Wrong aligner for {aligner}!!!")
 
         command = f"tcbf_syn_process {Collinearity.name}  " \
-                  f" {bound_bed}  {network_out} {minioverlap}"
+                  f" {bound_bed}  {network_out} {maxgap}"
         run_command(command)
     from tcbf.construct_synteny_block import construct_block
     construct_block(workdir,query,target,xdist,ydist,N)

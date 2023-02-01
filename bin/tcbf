@@ -26,7 +26,7 @@ def tcbf():
 @click.option('-d', "--distance", type=int, default=100e+3, help="TAD边界范围", required=False)
 @click.option("-aligner", type=click.Choice(["minimap2", "lastz", "blat", "GSAlign"]), default="minimap2",
               required=False)
-@click.option("--minioverlap", type=int, default=1000)
+@click.option("--maxgap", type=int, default=40000)
 @click.option('--only_print_command', default=False, required=False, help="只打印命令", is_flag=True)
 def run(config, output, processor, distance, aligner, minioverlap,
         only_print_command):
@@ -57,7 +57,7 @@ def run(config, output, processor, distance, aligner, minioverlap,
     for s1, s2 in permutations(all_species, 2):
         if only_print_command:
             command = f"tcbf second-process-alignment -q {s1} -t {s2} -o {workdir} --threads {processor} " \
-                      f"-aligner minimap2 -minioverlap {minioverlap}"
+                      f"-aligner minimap2 -maxgap {minioverlap}"
             print(command)
         else:
             align_genome(s1, s2, workdir, processor, aligner, minioverlap)
@@ -73,9 +73,9 @@ def run(config, output, processor, distance, aligner, minioverlap,
 @click.option("-t", '--TAD', type=click.Path(exists=True), help="TAD file ", required=True)
 @click.option("-g", '--genome', type=click.Path(exists=True), help="genome sequence file  ", required=True)
 @click.option('-d', "--distance", type=int, default=40000, required=False)
-@click.option('-p', "--prefix", type=str, default=None, help="输出文件的前缀", required=True)
-@click.option('-o', "--output", type=str, default='.', help="输出文件的目录", required=False)
-@click.option("--skip-mash", type=bool, default=False, help="跳过", required=False,is_flag=True)
+@click.option('-p', "--prefix", type=str, default=None, help="species prefix", required=True)
+@click.option('-o', "--output", type=str, default='.', help="output dir", required=False)
+@click.option("--skip-mash", type=bool, default=False, help="skip calculate mash dist", required=False,is_flag=True)
 def first_extract_boundary(tad: str,
                            genome: str,
                            distance: int,
@@ -88,17 +88,17 @@ def first_extract_boundary(tad: str,
 @tcbf.command()
 @click.option("-q", '--query', required=True)
 @click.option("-t", '--target', required=True)
-@click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
-@click.option("--threads", type=int, help="比对的线程数", required=False, default=0)
+@click.option('-o', "--output", type=str, help="output dir", required=True)
+@click.option("--threads", type=int, help="threads number", required=False, default=0)
 @click.option("-aligner", type=click.Choice(["minimap2", "lastz", "blat", "GSAlign"]), default="minimap2")
-@click.option("-minioverlap", type=int, default=5000)
-def second_process_alignment(query, target, output, threads, aligner, minioverlap):
-    align_genome(query, target, output, threads, aligner, minioverlap)
+@click.option("-maxgap", type=int, default=40000)
+def second_process_alignment(query, target, output, threads, aligner, maxgap):
+    align_genome(query, target, output, threads, aligner, maxgap)
 
 
 @tcbf.command()
-@click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
-@click.option('--syn', default=False, required=False, help="是否使用共线性的结果过滤", is_flag=True)
+@click.option('-o', "--output", type=str, help="outputdir", required=True)
+@click.option('--syn', default=False, required=False, help="filter TAD boundary synteny ", is_flag=True)
 def third_construct_TAD_network(output, syn):
     network_construct(output, need_syn=syn)
 
@@ -112,12 +112,12 @@ def third_construct_TAD_network(output, syn):
 
 
 @tcbf.command()
-@click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
-@click.option("--reference", type=str, help="参考物种的名称", required=True)
-@click.option("--chrom", type=str, help="染色体", required=True)
-@click.option("--start", type=int, help="起始坐标", required=True)
-@click.option("--end", type=int, help="结束坐标", required=True)
-@click.option("--plot", type=str, help="输出的图像名称", required=True)
+@click.option('-o', "--output", type=str, help="output dir", required=True)
+@click.option("--reference", type=str, help="reference species", required=True)
+@click.option("--chrom", type=str, help="chromosome", required=True)
+@click.option("--start", type=int, help="start position", required=True)
+@click.option("--end", type=int, help="end position", required=True)
+@click.option("--plot", type=str, help="output image file name", required=True)
 @click.argument("order", nargs=-1)
 def plot_syn_pair(output, reference, chrom, start, end, plot, order):
     if not order:
@@ -131,7 +131,7 @@ def plot_syn_pair(output, reference, chrom, start, end, plot, order):
 
 
 @tcbf.command()
-@click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
+@click.option('-o', "--output", type=str, help="output dir", required=True)
 @click.option("--reference", required=True)
 @click.option("--plot", required=True)
 def circos(output, reference, plot):
