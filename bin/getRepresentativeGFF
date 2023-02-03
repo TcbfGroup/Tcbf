@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+from collections import defaultdict
+import click
+
+
+def GFFAtrrParser(line):
+    line = line.strip("/\\;")
+    strings = line.split(";")
+    split_field = "="
+    info = defaultdict(lambda: [])
+    for var in strings:
+        if "=" not in var:
+            split_field = " "
+        attrInfo = var.split(split_field, 2)
+        attrName = attrInfo[0].strip()
+        attrInfoArr = attrInfo[1].split(",")
+        info[attrName] = attrInfoArr
+    return info
+
+
+def parseGFF(file, featurePattern="CDS"):
+    gene_trans = defaultdict(lambda: [])
+    tranLenMap = defaultdict(lambda: 0)
+    with open(file) as f:
+        for line in f:
+            if not line or line.startswith("#"):
+                continue
+            info = line.split()
+            start = int(info[3])
+            end = int(info[4])
+            attr_line = GFFAtrrParser(info[8])
+            if info[2] in ("mRNA", "transcript"):
+                transID = attr_line.get("ID", [""])[0]
+                if not transID:
+                    transID = attr_line.get("transcript_id")[0]
+                field = "Parent parent gene_id geneID gene Gene_id Name name ID".split()
+                for k in field:
+                    if k in attr_line.keys():
+                        geneID = attr_line.get(k)[0]
+                        break
+                gene_trans[geneID].append(transID)
+            elif info[2] == featurePattern:
+                transID = attr_line.get('Parent', "")[0]
+                if not transID:
+                    field = "parent  transcript_id".split()
+                    for k in field:
+                        if k in attr_line.keys():
+                            transID = attr_line.get(k)[0]
+                            break
+                length = end - start + 1
+                tranLenMap[transID] += length
+    genes_set = set()
+    trans_set = set()
+
+    for gene, trans in gene_trans.items():
+        longest_trans = sorted([(i, tranLenMap.get(i,0)) for i in trans], key=lambda x: x[1])[-1][0]
+        genes_set.add(gene)
+        trans_set.add(longest_trans)
+    return genes_set, trans_set
+
+
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+@click.command(context_settings=CONTEXT_SETTINGS)
+@click.option("-g","--gff", help="input GFF file", required=True)
+@click.option("-o", "--out", help = "output GFF file", required=True)
+@click.option("-p", "--pattern", help = "pattern", required=False, default="CDS")
+def extract_longest_gff(gff, out, pattern="CDS"):
+    genes, trans = parseGFF(gff, pattern)
+    with open(out, "w") as f1:
+        with open(gff) as f:
+            for line in f:
+                if not line or line.startswith("#"):
+                    continue
+                info = line.split()
+
+                attr_line = GFFAtrrParser(info[8])
+                if info[2] in ("mRNA", "transcript"):
+                    transID = attr_line.get("ID", [""])[0]
+                    if not transID:
+                        transID = attr_line.get("transcript_id")[0]
+
+                    if transID in trans:
+                        f1.write(line)
+                elif info[2] == pattern:
+                    transID = attr_line.get('Parent', "")[0]
+                    if not transID:
+                        field = "parent  transcript_id".split()
+                        for k in field:
+                            if k in attr_line.keys():
+                                transID = attr_line.get(k)[0]
+                                break
+                    if transID in trans:
+                        f1.write(line)
+
+                else:
+                    f1.write(line)
+
+
+if __name__ == '__main__':
+    extract_longest_gff()
+
