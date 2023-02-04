@@ -5,7 +5,7 @@ from tcbf.run_command import run_command
 
 def Check_dependencies():
     print("Checking dependency! ")
-    dependency_program = "mash minimap2 mcl".split()
+    dependency_program = "mash minimap2 mcl lastdb".split()
     have_command_not_in_path = False
     for command in dependency_program:
         if shutil.which(command) is None:
@@ -50,7 +50,23 @@ def download_mash():
               "cp mash-Linux64-v2.3/mash external"
     run_command(command)
 
+def download_last():
+    install_dir = os.path.join(os.path.abspath("."),"external")
+    command = "git clone https://gitlab.com/mcfrith/last.git;" \
+              "cd last;" \
+              "make;" \
+              f"make install prefix={install_dir}"
 
+    run_command(command)
+    os.environ["PATH"] = os.environ["PATH"] + ":" + os.path.join(os.path.abspath("."), "external", "bin")
+
+def download_gffread():
+    install_dir = os.path.join(os.path.abspath("."), "external")
+    command = "https://github.com/gpertea/gffread.git" \
+              "cd gffread;" \
+              "make release;" \
+              f"mv gffread {install_dir}"
+    run_command(command)
 def download_dependency(command):
     if not os.path.exists("external"):
         os.mkdir("external")
@@ -60,4 +76,6 @@ def download_dependency(command):
         download_mcl()
     elif command == "mash":
         download_mash()
+    elif command == "lastdb":
+        download_last()
 

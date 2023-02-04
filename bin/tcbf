@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import click
 from itertools import permutations
-from tcbf.extract_TAD_bound import extract_TAD_boundary
+from tcbf.extract_TAD_bound import extract_TAD_boundary, parse_gff
 from tcbf.process_alignment import align_genome
 from tcbf.network_construct import network_construct
 from tcbf.check_depend import Check_dependencies
@@ -21,15 +21,16 @@ def tcbf():
 
 @tcbf.command()
 @click.option("-c", '--config', type=click.Path(exists=True), help="Config file ", required=True)
-@click.option('-o', "--output", type=str, help="输出文件的目录", required=True)
-@click.option('-p', "--processor", type=int, default=0, help="进程数", required=False)
-@click.option('-d', "--distance", type=int, default=100e+3, help="TAD边界范围", required=False)
-@click.option("-aligner", type=click.Choice(["minimap2", "lastz", "blat", "GSAlign"]), default="minimap2",
+@click.option('-o', "--output", type=str, help="output dir", required=True)
+@click.option('-p', "--processor", type=int, default=0, help="align threads number ", required=False)
+@click.option('-d', "--distance", type=int, default=100e+3, help="TAD boundary range", required=False)
+@click.option("-aligner", type=click.Choice(["minimap2"]), default="minimap2",
               required=False)
 @click.option("--maxgap", type=int, default=40000)
-@click.option('--only_print_command', default=False, required=False, help="只打印命令", is_flag=True)
+@click.option('--only_print_command', default=False, required=False, help="only print split subcommand", is_flag=True)
+@click.option("-minimaplength", type=int, default=2000)
 def run(config, output, processor, distance, aligner, maxgap,
-        only_print_command):
+        only_print_command,minimaplength):
     workdir = output
     all_species = []
     if only_print_command:
@@ -39,12 +40,20 @@ def run(config, output, processor, distance, aligner, maxgap,
         for line in f:
             if line.startswith("#") or not line:
                 continue
-            genome_file, TAD_file, species_name = line.split()
+            value = line.split()
+
+            genome_file, TAD_file, species_name = value[:3]
+
+            if len(value) == 4:
+                gff = value[3]
+
             all_species.append(species_name)
             if only_print_command:
                 command = f"tcbf first-extract-boundary -t {TAD_file} -g {genome_file} -d {distance} -p " \
                           f"{species_name} -o" \
                           f" {workdir}"
+
+                command += f" --gff {gff}"
                 print(command)
             else:
                 extract_TAD_boundary(tad=TAD_file,
@@ -53,6 +62,9 @@ def run(config, output, processor, distance, aligner, maxgap,
                                      prefix=species_name,
                                      output=workdir,
                                      )
+
+                parse_gff(output, gff, species_name,TAD_file)
+
     print("### Step2")
     for s1, s2 in permutations(all_species, 2):
         if only_print_command:
@@ -60,7 +72,7 @@ def run(config, output, processor, distance, aligner, maxgap,
                       f"-aligner minimap2 -maxgap {maxgap}"
             print(command)
         else:
-            align_genome(s1, s2, workdir, processor, aligner, maxgap)
+            align_genome(s1, s2, workdir, processor, aligner, maxgap,minimap_length=minimaplength)
     if only_print_command:
         print("### Step3")
         command3 = f"tcbf  third-construct-tad-network -o {workdir}"
@@ -75,16 +87,30 @@ def run(config, output, processor, distance, aligner, maxgap,
 @click.option('-d', "--distance", type=int, default=40000, required=False)
 @click.option('-p', "--prefix", type=str, default=None, help="species prefix", required=True)
 @click.option('-o', "--output", type=str, default='.', help="output dir", required=False)
-@click.option("--skip-mash", type=bool, default=False, help="skip calculate mash dist", required=False,is_flag=True)
+@click.option("--gff", required=True, help="gff gene annotation file")
+@click.option("--skip-mash", type=bool, default=False, help="skip calculate mash dist", required=False, is_flag=True)
 def first_extract_boundary(tad: str,
                            genome: str,
                            distance: int,
                            prefix: str,
                            output: str,
+                           gff,
                            skip_mash):
+    parse_gff(output, gff, prefix,tad)
     extract_TAD_boundary(tad, genome, distance, prefix, output, skip_mash)
 
 
+
+from tcbf.pep_synteny import align_gene
+
+
+# @tcbf.command()
+# @click.option("-q", '--query', required=True)
+# @click.option("-t", '--target', required=True)
+# @click.option('-o', "--output", type=str, help="output dir", required=True)
+# @click.option("--maxgap", type=int, default=40000)
+# def run_pep_syn(query, target, output, maxgap):
+#     align_gene(output,query,target,maxgap=maxgap)
 @tcbf.command()
 @click.option("-q", '--query', required=True)
 @click.option("-t", '--target', required=True)
@@ -92,8 +118,11 @@ def first_extract_boundary(tad: str,
 @click.option("--threads", type=int, help="threads number", required=False, default=0)
 @click.option("-aligner", type=click.Choice(["minimap2", "lastz", "blat", "GSAlign"]), default="minimap2")
 @click.option("-maxgap", type=int, default=40000)
-def second_process_alignment(query, target, output, threads, aligner, maxgap):
-    align_genome(query, target, output, threads, aligner, maxgap)
+@click.option("-minimaplength", type=int, default=2000)
+def second_process_alignment(query, target, output, threads, aligner, maxgap,minimaplength):
+    align_gene(output, query, target, maxgap)
+    align_genome(query, target, output, threads, aligner, maxgap,minimap_length = minimaplength)
+
 
 
 @tcbf.command()
@@ -128,6 +157,9 @@ def plot_syn_pair(output, reference, chrom, start, end, plot, order):
     if (not plot.endswith("jpg")) and (not plot.endswith("pdf")):
         plot += ".pdf"
     plot_synteny(output, reference, chrom, start, end, order, plot)
+
+
+
 
 
 @tcbf.command()

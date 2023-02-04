@@ -213,11 +213,9 @@ def extract_TAD_boundary(tad: str,
                          prefix: str,
                          output: str,
                          skip: bool = False):
-    if not os.path.exists(output):
-        os.mkdir(output)
-    if not os.path.exists(os.path.join(output, "Step1")):
-        os.mkdir(os.path.join(output, "Step1"))
 
+    from copy import copy
+    output_dir = copy(output)
     output = os.path.join(output, "Step1")
     genome_file = os.path.join(output, f"{prefix}.genome.fa")
     if not skip:
@@ -237,21 +235,22 @@ def extract_TAD_boundary(tad: str,
         G1_TAD.extract_bound_seq(f)
 
 
-@click.command()
-@click.option("-t", '--TAD', type=click.Path(exists=True), help="TAD file ", required=True)
-@click.option("-g", '--genome', type=click.Path(exists=True), help="genome sequence file  ", required=True)
-@click.option('-d', "--distance", type=int, default=40000, required=False)
-@click.option('-p', "--prefix", type=str, default=None, help="输出文件的前缀", required=True)
-@click.option('-o', "--output", type=str, default='out', help="输出文件的目录", required=False)
-def main(tad: str,
-         genome: str,
-         distance: int,
-         prefix: str,
-         output: str,
-         not_need: bool):
-    extract_TAD_boundary(tad, genome, distance, prefix, output, not_need)
 
-
-if __name__ == '__main__':
-    pd.options.mode.chained_assignment = None
-    main()
+    from tcbf.pep_synteny import check_pep_bed
+    check_pep_bed(output_dir,prefix)
+def parse_gff(output,gff_file,prefix,tad_file):
+    if not os.path.exists(output):
+        os.mkdir(output)
+    if not os.path.exists(os.path.join(output, "Step1")):
+        os.mkdir(os.path.join(output, "Step1"))
+    file = os.path.join(output,"Step1",f"{prefix}.gff3")
+    vaild_chrom  = set(i.split()[0] for i in open(tad_file))
+    with open(gff_file)as f:
+        with open(file,"w")as f1:
+            for line in f:
+                chrom = line.split()[0]
+                if chrom not in vaild_chrom:
+                    continue
+                if not line.startswith("#") or not line:
+                    line = f"{prefix}_" + line
+                f1.write(line)

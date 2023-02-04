@@ -7,5 +7,6 @@ setup(name = "tcbf",
       license_files = ('LICENSE',),
       packages = ["tcbf"],
       include_package_data=True,
+      version='1.0',
       url = "https://github.com/hexin010101/Tcbf",
-     scripts=['bin/tcbf','bin/tcbf_syn_process','bin/plot_TAD_bound_synteny'])
+     scripts=['bin/tcbf','bin/tcbf_syn_process','bin/plot_TAD_bound_synteny',"bin/getRepresentativeGFF"])
