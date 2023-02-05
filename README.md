@@ -9,7 +9,7 @@
 </p>
 
 [中文 README](README.ch.md)
-![image](./pipeline.jpg)
+![image](static/pipeline.jpg)
 ## 📣 Introduction
 ___
 TADs are fundamental regulatory chromatin structures and are
@@ -71,18 +71,21 @@ ___
 git clone https://github.com/hexin010101/Tcbf
 cd Tcbf
 pip install -r requirements.txt
-python setup.py install
+python setup.py develop
 ```
 
-[//]: # (### Quick installation using docker)
+### Quick installation using docker container
 
-[//]: # ()
-[//]: # (`docker pull Tcbf`)
 
-[//]: # (Singularity container source)
+`docker pull Tcbf`
 
-[//]: # ()
-[//]: # (`singularity pull Tcbf.sif docker://Tcbf`)
+Singularity container source
+
+
+`singularity pull Tcbf.sif docker://Tcbf`
+
+### Conda install
+`conda install tcbf`
 ___
 ## 📝 Usage
 
@@ -91,24 +94,32 @@ To run Tcbf on the example Data:
 ```
 Tcbf.py run -c config.txt  -o test
 ```
+### Advanced
+For HPC users have multiple nodes, we also provide a step by step to accelerate work.
+```
+tcbf run -c config.txt  -o test --only_print_command
+```
+For more details, see [Here]()
 
 ### Inputs
-The config.txt is a table file with three columns. 
-The first columns is path of genome sequence path.
+The config.txt is a table file with four columns. 
+The first columns is path of genome sequence path in FASTA format.
 
-The second columns is TAD annotaed file.
+The second columns is TAD annotaed file, which generated from [HiTAD](https://xiaotaowang.github.io/TADLib/hitad.html).
 
 
 The third column is the individual name.
+
+the fouth columns in gene annotation file in gff3 format
 
 
 Of note, pay attention to the contigs or scaffolds. For organisms have well assembly,
 we usually recommand to remove all scaffolds.
 ```
-genome1.fasta   genome1_tad.txt g1
-genome2.fasta   genome2_tad.txt g2
-genome3.fasta   genome3_tad.txt g3
-genome4.fasta   genome4_tad.txt g4
+genome1.fasta   genome1_tad.txt g1  genome1.gff3
+genome2.fasta   genome2_tad.txt g2  genome2.gff3
+genome3.fasta   genome3_tad.txt g3  genome3.gff3
+genome4.fasta   genome4_tad.txt g4  genome4.gff3
 ```
 
 we use the results from [HiTAD](https://academic.oup.com/nar/article/45/19/e163/4093166) 
@@ -121,8 +132,7 @@ Chr01   3950000 4600000
 Chr01   4600000 5900000
 Chr01   5900000 6350000
 ```
-if your TAD annotated file from other software, we also provide a [method]() 
-to convert.
+
 
 
 ### Output
@@ -138,20 +148,15 @@ from largest orthogroup to smallest.
 | g1_34_left_first,g1_34_left_middlee                 | g2_124_right_last,g2_14_left_middle, |
 
 
-For each pair of genome comparisons, we provided a JSON file 
-to explore the conserved TAD structure. For More detail, see [Here]().
-```
-{"A_0":["B_10"], ## highly conserved
-"A_1":["B_2","B_3"] ## TAD splited              
-}
-```
-### Advanced
-For HPC users have multiple nodes, we also provide a step by step to accelerate work.
-```
-tcbf run -c config.txt  -o test --only_print_command
-```
-For more details, see [Here]()
+### Visualization
+The user can input a region of  genome, 
+and the software can automatically obtain the corresponding 
+three-dimensional structural relationship.
+The red part in the figure represents the TAD range, and the yellow rectangle represents the TAD boundary. Light blue indicates collinear pairs.
 
+
+`tcbf plot-syn-pair -o out -reference human --chrom chr7 -start 127910000 -end 131410000 -plot example.pdf`
+![image](static/example.png)
 
 
 ## 😉 Author
