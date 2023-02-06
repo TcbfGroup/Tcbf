@@ -5,8 +5,8 @@ from tcbf.extract_TAD_bound import extract_TAD_boundary, parse_gff
 from tcbf.process_alignment import align_genome
 from tcbf.network_construct import network_construct
 from tcbf.check_depend import Check_dependencies
-from tcbf.visualization.circos import plot_circos
-from tcbf.visualization.plot_tad_structure import plot_synteny
+from tcbf.circos import plot_circos
+from test.visualization.plot_tad_structure import plot_synteny
 
 import warnings
 
