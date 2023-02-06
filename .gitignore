@@ -2,8 +2,8 @@ test/*
 test/
 .idea/
 tcbf/util/
-tcbf/visualization/multiple_plot.py
-tcbf/visualization/plot_pair_hic_heatmap.py
-tcbf/visualization/plot_TAD.py
-tcbf/visualization/plot_tad_structure.py
-tcbf/visualization/run_syri.py
+test/visualization/multiple_plot.py
+test/visualization/plot_pair_hic_heatmap.py
+test/visualization/plot_TAD.py
+test/visualization/plot_tad_structure.py
+test/visualization/run_syri.py

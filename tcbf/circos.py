@@ -1,7 +1,6 @@
 import collections
 import os.path
 import pycircos
-import matplotlib.pyplot as plt
 from pandas import read_table
 from pandas import concat
 from pandas import read_csv

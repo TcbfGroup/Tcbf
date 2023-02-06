@@ -168,8 +168,9 @@ class TADs:
 
 def merge(intervals,gap = 40e+3):
     """
-    :type intervals: List[Interval]
-    :rtype: List[Interval]
+    :param intervals: List[Interval]
+    :param gap: int
+    :return: List[Interval]
     """
 
     # genearl idea:

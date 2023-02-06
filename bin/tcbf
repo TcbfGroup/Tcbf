@@ -6,8 +6,7 @@ from tcbf.process_alignment import align_genome
 from tcbf.network_construct import network_construct
 from tcbf.check_depend import Check_dependencies
 from tcbf.circos import plot_circos
-from test.visualization.plot_tad_structure import plot_synteny
-
+# from test.visualization.plot_tad_structure import plot_synteny
 import warnings
 
 warnings.filterwarnings("ignore")
