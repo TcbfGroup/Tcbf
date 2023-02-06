@@ -7,3 +7,4 @@ pyfastx
 pysam
 setuptools
 jcvi
+python-circos
