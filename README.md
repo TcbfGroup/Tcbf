@@ -158,7 +158,7 @@ The red part in the figure represents the TAD range, and the yellow rectangle re
 `tcbf plot-syn-pair -o out -reference human --chrom chr7 -start 127910000 -end 131410000 -plot example.pdf`
 ![image](static/example.png)
 
-For comparison of multiple species, please refer to [Here](example/heatmap.R) or [online document](https://github.com/hexin010101/Tcbf/example/heatmap.R).
+For heatmap visualization of multiple species, please refer to [Here](example/heatmap.R) or [online document](https://github.com/hexin010101/Tcbf/example/heatmap.R).
 ![image](static/heatmap.png)
 
 ## 😉 Author
