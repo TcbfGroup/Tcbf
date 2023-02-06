@@ -8,7 +8,7 @@
     </a>
 </p>
 
-[中文 README](README.ch.md)
+[中文 README](Tcbf User Manual.docx)
 ![image](static/pipeline.png)
 ## 📣 Introduction
 ___
