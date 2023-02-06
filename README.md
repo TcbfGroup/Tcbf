@@ -9,7 +9,7 @@
 </p>
 
 [中文 README](README.ch.md)
-![image](static/pipeline.jpg)
+![image](static/pipeline.png)
 ## 📣 Introduction
 ___
 TADs are fundamental regulatory chromatin structures and are
@@ -158,6 +158,8 @@ The red part in the figure represents the TAD range, and the yellow rectangle re
 `tcbf plot-syn-pair -o out -reference human --chrom chr7 -start 127910000 -end 131410000 -plot example.pdf`
 ![image](static/example.png)
 
+For comparison of multiple species, please refer to [Here](example/heatmap.R) or [online document](https://github.com/hexin010101/Tcbf/example/heatmap.R).
+![image](static/heatmap.png)
 
 ## 😉 Author
 Tbcf are maintained by: * [@HeXin](https://github.com/hexin010101)
