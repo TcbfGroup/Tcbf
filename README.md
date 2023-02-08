@@ -46,7 +46,6 @@ Mash is used to measure the genetics distance between different genome sequences
 
 ```
 install.packages("BiocManager")
-install.packages("feather")
 BiocManager::install("GenomicRanges")
 BioManager::install("plyranges")
 install.packages("tidyverse")

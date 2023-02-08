@@ -1,5 +1,6 @@
 import subprocess
 import sys
+from multiprocessing import Pool
 def run_command(command):
     """
     此段代码借鉴了  109-130行  https://github.com/davidemms/OrthoFinder/blob/master/scripts_of/__main__.py
@@ -26,3 +27,10 @@ def run_command(command):
             print(stderr)
         sys.exit()
     return stdout
+
+
+def parall_run(commands,process_number):
+    p = Pool(process_number)
+    p.map(run_command,commands)
+    p.close()
+    p.join()

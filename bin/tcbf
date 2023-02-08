@@ -6,6 +6,7 @@ from tcbf.process_alignment import align_genome
 from tcbf.network_construct import network_construct
 from tcbf.check_depend import Check_dependencies
 from tcbf.circos import plot_circos
+from tcbf.run_command import parall_run
 # from test.visualization.plot_tad_structure import plot_synteny
 import warnings
 
@@ -36,34 +37,21 @@ def run(config, output, processor, distance, aligner, maxgap,
         print("### Step1")
 
     with open(config) as f:
+        commands = []
         for line in f:
             if line.startswith("#") or not line:
                 continue
             value = line.split()
-
-            genome_file, TAD_file, species_name = value[:3]
-
-            if len(value) == 4:
-                gff = value[3]
-
+            genome_file, TAD_file, species_name,gff = value
             all_species.append(species_name)
-            if only_print_command:
-                command = f"tcbf first-extract-boundary -t {TAD_file} -g {genome_file} -d {distance} -p " \
-                          f"{species_name} -o" \
-                          f" {workdir}"
-
-                command += f" --gff {gff}"
-                print(command)
-            else:
-                extract_TAD_boundary(tad=TAD_file,
-                                     genome=genome_file,
-                                     distance=distance,
-                                     prefix=species_name,
-                                     output=workdir,
-                                     )
-
-                parse_gff(output, gff, species_name,TAD_file)
-
+            command = f"tcbf first-extract-boundary -t {TAD_file} -g {genome_file} -d {distance} -p " \
+                      f"{species_name} -o" \
+                      f" {workdir} -gff {gff}"
+            commands.append(command)
+        if only_print_command:
+            print("\n".join(commands))
+        else:
+            parall_run(commands)
     print("### Step2")
     for s1, s2 in permutations(all_species, 2):
         if only_print_command:
