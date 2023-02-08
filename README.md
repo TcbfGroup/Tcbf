@@ -92,6 +92,7 @@ You can test the Tcbf pipeline with a toy project. which takes about five mins.
 To run Tcbf on the example Data:
 ```
 cd example;
+bash download.sh;
 Tcbf.py run -c config.txt  -o test
 ```
 ### Advanced
