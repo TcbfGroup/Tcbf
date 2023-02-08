@@ -8,7 +8,7 @@
     </a>
 </p>
 
-[中文文档](TcbfUserManual.docx)
+[中文文档](static/TcbfUserManual.docx)
 ![image](static/pipeline.png)
 ## 📣 Introduction
 ___
@@ -91,6 +91,7 @@ ___
 You can test the Tcbf pipeline with a toy project. which takes about five mins.
 To run Tcbf on the example Data:
 ```
+cd example;
 Tcbf.py run -c config.txt  -o test
 ```
 ### Advanced

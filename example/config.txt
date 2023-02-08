@@ -1,0 +1,3 @@
+hg19.fa human_tad.bed   human   hg19.ncbiRefSeq.gtf.gff3
+rheMac8.fa      macaque_tad.bed rheMac8.ncbiRefSeq.gtf.gff3
+mm10.fa mouse_tad.bed   mouse   mm10.ncbiRefSeq.gtf.gff3

@@ -7,7 +7,7 @@ from tcbf.network_construct import network_construct
 from tcbf.check_depend import Check_dependencies
 from tcbf.circos import plot_circos
 from tcbf.run_command import parall_run
-# from test.visualization.plot_tad_structure import plot_synteny
+from tcbf.plot_tad_structure import plot_synteny
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -23,7 +23,7 @@ def tcbf():
 @click.option("-c", '--config', type=click.Path(exists=True), help="Config file ", required=True)
 @click.option('-o', "--output", type=str, help="output dir", required=True)
 @click.option('-p', "--processor", type=int, default=0, help="align threads number ", required=False)
-@click.option('-d', "--distance", type=int, default=100e+3, help="TAD boundary range", required=False)
+@click.option('-d', "--distance", type=int, default=40000, help="TAD boundary range", required=False)
 @click.option("-aligner", type=click.Choice(["minimap2"]), default="minimap2",
               required=False)
 @click.option("--maxgap", type=int, default=40000)
@@ -43,23 +43,28 @@ def run(config, output, processor, distance, aligner, maxgap,
                 continue
             value = line.split()
             genome_file, TAD_file, species_name,gff = value
+
             all_species.append(species_name)
             command = f"tcbf first-extract-boundary -t {TAD_file} -g {genome_file} -d {distance} -p " \
-                      f"{species_name} -o" \
-                      f" {workdir} -gff {gff}"
+                      f"{species_name} -o " \
+                      f" {workdir} --gff {gff}"
             commands.append(command)
         if only_print_command:
             print("\n".join(commands))
         else:
-            parall_run(commands)
-    print("### Step2")
+            parall_run(commands,processor)
+
+    commands = []
     for s1, s2 in permutations(all_species, 2):
-        if only_print_command:
-            command = f"tcbf second-process-alignment -q {s1} -t {s2} -o {workdir} --threads {processor} " \
-                      f"-aligner minimap2 -maxgap {maxgap}"
-            print(command)
-        else:
-            align_genome(s1, s2, workdir, processor, aligner, maxgap,minimap_length=minimaplength)
+        command = f"tcbf second-process-alignment -q {s1} -t {s2} -o {workdir}  " \
+                  f" -aligner minimap2 -maxgap {maxgap}"
+        commands.append(command)
+    if only_print_command:
+        print("### Step2")
+        print("\n".join(commands))
+    else:
+        parall_run(commands,int(processor/3))
+
     if only_print_command:
         print("### Step3")
         command3 = f"tcbf  third-construct-tad-network -o {workdir}"
