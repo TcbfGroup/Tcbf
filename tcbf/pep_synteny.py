@@ -4,7 +4,7 @@ from tempfile import NamedTemporaryFile
 from pandas import read_table,read_csv,concat
 from tcbf.run_command import run_command
 def parse_block(workdir,query,target,out):
-    query_boundries = read_csv(os.path.join(workdir,"Step1",f"{query}.bound.bed"))
+    query_boundries = read_csv(os.path.join(workdir,"Step1",f"{query}.boundary.bed"))
     query_gene = read_table(os.path.join(workdir,"Step2",f"{query}.bed")).iloc[:,:4]
     query_gene.columns = "chromosome start end gene_name".split()
 
@@ -39,7 +39,6 @@ def extract_pep(workdir,species):
     command = f"gffread -g {genome} -y {out} {gff3};" \
               f"cd {os.path.join(workdir,'Step2')};" \
               f" lastdb -p {species} {species}.pep"
-    print(command)
     run_command(command)
 def extract_mRNA_bed(workdir,species):
 
