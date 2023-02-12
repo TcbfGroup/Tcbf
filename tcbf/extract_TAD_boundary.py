@@ -1,11 +1,8 @@
 import os.path
-import sys
-
 import pyfastx
 from pandas import DataFrame
 from pandas import read_table
 import pandas as pd
-import click
 from tcbf.run_command import run_command
 
 """
