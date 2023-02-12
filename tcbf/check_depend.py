@@ -11,10 +11,11 @@ def Check_dependencies():
         if shutil.which(command) is None:
             if os.path.exists(os.path.join("external", command)):
                 os.environ["PATH"] = os.environ["PATH"] + ":" + os.path.join(os.path.abspath("."),"external")
+                os.environ["PATH"] = os.environ["PATH"] + ":" + os.path.join(os.path.abspath("."), "external","bin")
                 continue
             print(f"{command} is not in PATH !!!")
             have_command_not_in_path = True
-            is_downloading = input(f"是否自动下载{command}到 ./external  Y/N")
+            is_downloading = input(f"auto download {command} to ./external?  Y/N")
             if is_downloading.upper() == "Y" or is_downloading.upper() == "YES":
                 print(f"安装{command}中")
                 download_dependency(command)

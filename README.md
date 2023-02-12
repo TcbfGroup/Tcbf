@@ -93,8 +93,7 @@ python setup.py develop
 ___
 ## 📝 Usage
 
-You can test the Tcbf pipeline with a toy project. which takes about five mins.
-To run Tcbf on the example Data:
+You can test the Tcbf pipeline with the example.
 ```
 cd example;
 bash download.sh;
