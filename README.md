@@ -1,6 +1,6 @@
 <h1 align="center">Tcbf</h1>
 <p align="center">
-    <em> ❤️ Tcbf = Topological associating domain(TAD) Conservative Boundary Finder</em>
+    <em> ❤️ Tcbf = Topologically associating domain(TAD) Conservative Boundary Finder</em>
 </p>
 <p>
     <a href="https://opensource.org/licenses/MIT">
@@ -14,7 +14,7 @@
 ___
 TADs are fundamental regulatory chromatin structures and are
 largely conserved across tissues and species. We developed 
-a Python/R pipeline Tcbf to identify the conservative TAD boundaries between
+a Python/R pipeline Tcbf to identify the conserved TAD boundaries between
 multiple genome.
 
 
