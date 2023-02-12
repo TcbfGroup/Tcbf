@@ -1,4 +1,4 @@
-Bio
+Bio==1.5.3
 click
 matplotlib
 numpy

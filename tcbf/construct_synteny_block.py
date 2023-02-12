@@ -35,7 +35,7 @@ class Alignment(object):
 
 
 def get_boundary_order(workdir, genome):
-    file = os.path.join(workdir, "Step1", f"{genome}.bound.bed")
+    file = os.path.join(workdir, "Step1", f"{genome}.boundary.bed")
     data = read_csv(file)
     data["index_number"] = range(data.shape[0])
 
