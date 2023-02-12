@@ -113,7 +113,7 @@ class TADs:
                           name=self.prefix + f"_{num}")
                 num += 1
                 data.append(tad)
-                tad_info.append((tad.name, *tad.left_bound[1:], *tad.right_bound[1:]))
+                tad_info.append((tad.name, *tad.left_boundary[1:], *tad.right_boundary[1:]))
             tad_boundary = DataFrame(tad_info)
 
             tad_boundary.columns = "tad_name left_start left_end right_start right_end".split()
