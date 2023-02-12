@@ -1,6 +1,6 @@
 <h1 align="center">Tcbf</h1>
 <p align="center">
-    <em> ❤️ Tcbf = Topological association domain(TAD) Conservative Boundary Finder</em>
+    <em> ❤️ Tcbf = Topological associating domain(TAD) Conservative Boundary Finder</em>
 </p>
 <p>
     <a href="https://opensource.org/licenses/MIT">
@@ -14,7 +14,7 @@
 ___
 TADs are fundamental regulatory chromatin structures and are
 largely conserved across tissues and species. We developed 
-a python pipeline Tcbf to identify the conservative TAD boundary between
+a Python/R pipeline Tcbf to identify the conservative TAD boundaries between
 multiple genome.
 
 
@@ -73,18 +73,23 @@ pip install -r requirements.txt
 python setup.py develop
 ```
 
-### Quick installation using docker container
+[//]: # (### Quick installation using docker container)
 
+[//]: # ()
+[//]: # ()
+[//]: # (`docker pull Tcbf`)
 
-`docker pull Tcbf`
+[//]: # ()
+[//]: # (Singularity container source)
 
-Singularity container source
+[//]: # ()
+[//]: # ()
+[//]: # (`singularity pull Tcbf.sif docker://Tcbf`)
 
+[//]: # ()
+[//]: # (### Conda install)
 
-`singularity pull Tcbf.sif docker://Tcbf`
-
-### Conda install
-`conda install tcbf`
+[//]: # (`conda install tcbf`)
 ___
 ## 📝 Usage
 

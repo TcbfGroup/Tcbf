@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+import os.path
+
 import click
 from itertools import permutations
-from tcbf.extract_TAD_bound import extract_TAD_boundary, parse_gff
+from tcbf.extract_TAD_boundary import extract_TAD_boundary, parse_gff
 from tcbf.process_alignment import align_genome
 from tcbf.network_construct import network_construct
 from tcbf.check_depend import Check_dependencies
@@ -35,6 +37,11 @@ def run(config, output, processor, distance, aligner, maxgap,
     all_species = []
     if only_print_command:
         print("### Step1")
+    if not os.path.exists(output):
+        os.mkdir(output)
+        os.mkdir(os.path.join(output,"Step1"))
+        os.mkdir(os.path.join(output, "Step2"))
+        os.mkdir(os.path.join(output, "Step3"))
 
     with open(config) as f:
         commands = []
@@ -56,14 +63,14 @@ def run(config, output, processor, distance, aligner, maxgap,
 
     commands = []
     for s1, s2 in permutations(all_species, 2):
-        command = f"tcbf second-process-alignment -q {s1} -t {s2} -o {workdir}  " \
+        command = f"tcbf second-process-alignment -q {s1} -t {s2} --threads 2 -o {workdir}  " \
                   f" -aligner minimap2 -maxgap {maxgap}"
         commands.append(command)
     if only_print_command:
         print("### Step2")
         print("\n".join(commands))
     else:
-        parall_run(commands,int(processor/3))
+        parall_run(commands,processor)
 
     if only_print_command:
         print("### Step3")
@@ -107,7 +114,7 @@ from tcbf.pep_synteny import align_gene
 @click.option("-q", '--query', required=True)
 @click.option("-t", '--target', required=True)
 @click.option('-o', "--output", type=str, help="output dir", required=True)
-@click.option("--threads", type=int, help="threads number", required=False, default=0)
+@click.option("--threads", type=int, help="threads number", required=False, default=1)
 @click.option("-aligner", type=click.Choice(["minimap2", "lastz", "blat", "GSAlign"]), default="minimap2")
 @click.option("-maxgap", type=int, default=40000)
 @click.option("-minimaplength", type=int, default=2000)

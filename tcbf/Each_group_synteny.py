@@ -1,5 +1,5 @@
 import os.path
-from tcbf.extract_TAD_bound import format_seq
+from tcbf.extract_TAD_boundary import format_seq
 
 from tempfile import NamedTemporaryFile
 from tcbf.run_command import run_command
@@ -21,7 +21,7 @@ def plot_synteny(workdir, TAD_names: list, output_file):
 
 
         genome = line.split("_")[0]
-        file = os.path.join(TAD_file_dir, f"{genome}.bound.fasta")
+        file = os.path.join(TAD_file_dir, f"{genome}.boundary.fasta")
 
         seq = pysam_get_sequence(file,line)
         seqs.append((line,seq))

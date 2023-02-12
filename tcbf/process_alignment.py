@@ -132,16 +132,16 @@ from tcbf.aligner_paramters import minimap2_align
 #                 run_command(command)
 #                 process_nucmer_coord(coord.name, output)
 
-def extract_gene_not_aligned_bound(workdir,query,target,out_file):
+def extract_gene_not_aligned_boundary(workdir, query, target, out_file):
     gene_aligned_file = os.path.join(workdir,"Step2",f"{query}-{target}.gene.pair")
     gene_aligned = set(i.split()[0] for i in open(gene_aligned_file))
-    query_bound = os.path.join(workdir, "Step1", f"{query}.bound.fasta")
-    fa = pysam.FastaFile(query_bound)
-    total_bound = set(fa.references)
-    unaligned = total_bound - gene_aligned
-    from tcbf.extract_TAD_bound import format_seq
-    for bound_id in unaligned:
-        out_file.write(f">{bound_id}\n{format_seq(fa[f'{bound_id}'])}")
+    query_boundary = os.path.join(workdir, "Step1", f"{query}.boundary.fasta")
+    fa = pysam.FastaFile(query_boundary)
+    total_boundary = set(fa.references)
+    unaligned = total_boundary - gene_aligned
+    from tcbf.extract_TAD_boundary import format_seq
+    for boundary_id in unaligned:
+        out_file.write(f">{boundary_id}\n{format_seq(fa[f'{boundary_id}'])}")
 
 
 
@@ -157,21 +157,21 @@ def align_genome(query, target, workdir, threads, aligner, maxgap,
         os.mkdir(result_dir)
 
     target_genome = os.path.join(workdir, "Step1", f"{target}.genome.fa")
-    bound_bed = os.path.join(workdir, "Step1", f"{target}.bound.bed")
+    boundary_bed = os.path.join(workdir, "Step1", f"{target}.boundary.bed")
     network_out = os.path.join(result_dir, f"{query}_{target}.network.bed")
     gene_pair = os.path.join(result_dir, f"{query}-{target}.gene.pair")
     sequence_pair = os.path.join(result_dir, f"{query}-{target}.sequence.pair")
-    with NamedTemporaryFile("w+t")as gene_not_aligned_bound:
+    with NamedTemporaryFile("w+t")as gene_not_aligned_boundary:
         # with open("/root/human_data/unalign.fasta","w")as f:
-        extract_gene_not_aligned_bound(workdir,query,target,gene_not_aligned_bound)
-        query_bound = gene_not_aligned_bound.name
+        extract_gene_not_aligned_boundary(workdir,query,target,gene_not_aligned_boundary)
+        query_boundary = gene_not_aligned_boundary.name
         with NamedTemporaryFile("w+t") as Collinearity:
             if aligner == "nucmer":
                 sys.exit("Nucmer is not supported temporarily, and will be added in the future")
                 # nucmer_align(query_bound, target_genome, Collinearity.name, threads=threads)
             elif aligner == "minimap2":
                 minimap2_align(workdir,
-                               query_bound,
+                               query_boundary,
                                target_genome,
                                Collinearity.name,
                                query,
@@ -182,7 +182,7 @@ def align_genome(query, target, workdir, threads, aligner, maxgap,
                 raise TypeError(f"Wrong aligner for {aligner}!!!")
 
             command = f"tcbf_syn_process {Collinearity.name}  " \
-                      f" {bound_bed}  {sequence_pair} {maxgap}"
+                      f" {boundary_bed}  {sequence_pair} {maxgap}"
             run_command(command)
     concat([read_table(i) for i in (sequence_pair,gene_pair)]).to_csv(network_out,index=False,sep = "\t")
     from tcbf.construct_synteny_block import construct_block

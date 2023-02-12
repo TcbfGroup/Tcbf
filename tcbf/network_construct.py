@@ -128,11 +128,11 @@ def construct_one_to_many(workdir,need_syn):
         for s2 in species:
             if s1 == s2:
                 continue
-            bound_file = os.path.join(workdir,"Step1",f"{s1}.bound.bed")
+            boundary_file = os.path.join(workdir,"Step1",f"{s1}.boundary.bed")
             file1 = os.path.join(step2, file_template.format(s1, s2))
             file2 = os.path.join(step2, file_template.format(s2, s1))
             max_score = get_max_score(file1, file2)
-            boundaries = read_csv(bound_file)[["tad_name"]]
+            boundaries = read_csv(boundary_file)[["tad_name"]]
             boundaries.columns = ["genome1"]
             if max_score is not None:
                 max_score = max_score.iloc[:,:2]

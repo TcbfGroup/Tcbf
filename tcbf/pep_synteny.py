@@ -55,7 +55,7 @@ def extract_mRNA_bed(workdir,species):
         elif "transcript_id" in fileds:
             return "transcript_id"
         else:
-            sys.exit("gff file mRNA filed error")
+            sys.exit("gff file mRNA field error")
     with open(gff_file)as f:
         for line in f:
             if line.startswith("#") or not line:
@@ -74,6 +74,8 @@ def extract_mRNA_bed(workdir,species):
             command = f"python -m jcvi.formats.gff bed --type=mRNA --key={fields} {gff_file} -o {out}"
         elif type == "transcript":
             command = f"python -m jcvi.formats.gff bed  --type=transcript --key={fields} {gff_file} -o {out} "
+        else:
+            raise Exception("missing valid mRNA feature ")
     except:
         sys.exit("missing valid mRNA feature")
     run_command(command)
@@ -119,7 +121,7 @@ def align_gene(workdir,query,target,maxgap):
 
     with NamedTemporaryFile("w+t") as Collinearity:
         parse_block(workdir, query, target, Collinearity.name)
-        bound_bed = os.path.join(workdir, "Step1", f"{target}.bound.bed")
+        boundary = os.path.join(workdir, "Step1", f"{target}.boundary.bed")
         networkout = os.path.join(workdir, "Step2", f"{query}-{target}.gene.pair")
-        command = f"tcbf_syn_process  {Collinearity.name}  {bound_bed} {networkout} {maxgap}"
+        command = f"tcbf_syn_process  {Collinearity.name}  {boundary} {networkout} {maxgap}"
         run_command(command)

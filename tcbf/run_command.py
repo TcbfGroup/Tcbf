@@ -1,5 +1,4 @@
 import subprocess
-import sys
 from multiprocessing import Pool
 def run_command(command):
     """
@@ -25,12 +24,13 @@ def run_command(command):
         if n_stderr_lines > 0:
             print("stderr:\n-------")
             print(stderr)
-        sys.exit()
+        raise Exception("error")
     return stdout
 
 
 def parall_run(commands,process_number):
-    p = Pool(process_number)
-    p.map(run_command,commands)
-    p.close()
-    p.join()
+    if process_number <= 0:
+        from multiprocessing import cpu_count
+        process_number = cpu_count()
+    with Pool(process_number)as p:
+       p.map(run_command,commands)

@@ -9,7 +9,7 @@ import click
 from tcbf.run_command import run_command
 
 """
-python extract_TAD_bound.py  -t /data/A_genome_tad.txt \
+python extract_TAD_boundary.py  -t /data/A_genome_tad.txt \
 -g /data/Garboreum_genome_HAU_v1.0/Lachesis_assembly_changed.fa -d 80000 -p A -o ~/data
 
 """
@@ -48,17 +48,17 @@ class TAD:
         self._position = position
 
     @property
-    def left_bound(self):
+    def left_boundary(self):
         return self.chromosome, *self._left_coord
 
     @property
-    def right_bound(self):
+    def right_boundary(self):
         return self.chromosome, *self._right_coord
 
     def __repr__(self):
         return f"{self.name}\t {self.chromosome}\t{self.start}\t{self.end} Length:{self.length}\t\n" \
-               f"Left bound:\t{self.left_bound}Bound length:\t{self.right_bound[2] - self.left_bound[1] + 1}\n" \
-               f"Right bound:\t{self.right_bound}\n"
+               f"Left boundary:\t{self.left_boundary}Boundary length:\t{self.right_boundary[2] - self.left_boundary[1] + 1}\n" \
+               f"Right boundary:\t{self.right_boundary}\n"
 
 
 def bed2position(chrom, start, end):
@@ -89,7 +89,7 @@ class TADs:
                  prefix: str = "TAD",
                  ):
 
-        self.TAD_bound_table = None
+        self.TAD_boundary_table = None
         self.prefix = prefix
 
         tad_table = read_table(tad_file, header=None)
@@ -114,11 +114,11 @@ class TADs:
                 num += 1
                 data.append(tad)
                 tad_info.append((tad.name, *tad.left_bound[1:], *tad.right_bound[1:]))
-            tad_bound = DataFrame(tad_info)
+            tad_boundary = DataFrame(tad_info)
 
-            tad_bound.columns = "tad_name left_start left_end right_start right_end".split()
+            tad_boundary.columns = "tad_name left_start left_end right_start right_end".split()
 
-            ss = pd.concat([line[1], tad_bound], axis=1)
+            ss = pd.concat([line[1], tad_boundary], axis=1)
 
             tad_infos.append(ss)
 
@@ -141,29 +141,29 @@ class TADs:
         seq = self.fasta.fetch(region=position)
         return format_seq(seq.strip("N"))
 
-    def extract_bound_bed(self, handle):
+    def extract_boundary_bed(self, handle):
         s1 = self.TAD_table.loc[:, ["chromosome", "left_start", "left_end"]]
         s2 = self.TAD_table.loc[:, ["chromosome", "right_start", "right_end"]]
         s1.columns = ("chromosome", "start", "end")
         s2.columns = s1.columns
-        self.TAD_bound_table = pd.concat([s1, s2], axis=0).drop_duplicates().sort_values(["chromosome", "start"]). \
+        self.TAD_boundary_table = pd.concat([s1, s2], axis=0).drop_duplicates().sort_values(["chromosome", "start"]). \
             reset_index(drop=True)
-        self.TAD_bound_table = self.TAD_bound_table.groupby("chromosome").apply(
+        self.TAD_boundary_table = self.TAD_boundary_table.groupby("chromosome").apply(
             lambda x: pd.DataFrame(merge(x.iloc[:, 1:].apply(tuple, axis=1).to_list()))).reset_index().iloc[:,
                                [0, 2, 3]]
-        self.TAD_bound_table.columns = ("chromosome", "start", "end")
+        self.TAD_boundary_table.columns = ("chromosome", "start", "end")
 
-        self.TAD_bound_table.index = self.TAD_bound_table.index.set_names(["tad_name"])
+        self.TAD_boundary_table.index = self.TAD_boundary_table.index.set_names(["tad_name"])
 
-        self.TAD_bound_table.reset_index(inplace=True)
-        self.TAD_bound_table["tad_name"] = self.prefix + "_bound_" + self.TAD_bound_table["tad_name"].astype(str)
+        self.TAD_boundary_table.reset_index(inplace=True)
+        self.TAD_boundary_table["tad_name"] = self.prefix + "_boundary_" + self.TAD_boundary_table["tad_name"].astype(str)
 
-        self.TAD_bound_table.to_csv(handle, index=False)
+        self.TAD_boundary_table.to_csv(handle, index=False)
 
-    def extract_bound_seq(self, out_fasta):
-        for tad_bound in self.TAD_bound_table.itertuples():
-            seq = self._extract_seq(*tad_bound[2:])
-            out_fasta.write(f">{tad_bound[1]} {tad_bound[2:]}\n{seq}\n")
+    def extract_boundary_seq(self, out_fasta):
+        for tad_boundary in self.TAD_boundary_table.itertuples():
+            seq = self._extract_seq(*tad_boundary[2:])
+            out_fasta.write(f">{tad_boundary[1]} {tad_boundary[2:]}\n{seq}\n")
 
 
 def merge(intervals,gap = 40e+3):
@@ -230,20 +230,16 @@ def extract_TAD_boundary(tad: str,
 
     G1_TAD.export_table(os.path.join(output, f"{prefix}.TAD"))
 
-    with open(os.path.join(output, f"{prefix}.bound.bed", ), "w") as f:
-        G1_TAD.extract_bound_bed(f)
-    with open(os.path.join(output, f"{prefix}.bound.fasta", ), "w") as f:
-        G1_TAD.extract_bound_seq(f)
+    with open(os.path.join(output, f"{prefix}.boundary.bed", ), "w") as f:
+        G1_TAD.extract_boundary_bed(f)
+    with open(os.path.join(output, f"{prefix}.boundary.fasta", ), "w") as f:
+        G1_TAD.extract_boundary_seq(f)
 
 
 
     from tcbf.pep_synteny import check_pep_bed
     check_pep_bed(output_dir,prefix)
 def parse_gff(output,gff_file,prefix,tad_file):
-    if not os.path.exists(output):
-        os.mkdir(output)
-    if not os.path.exists(os.path.join(output, "Step1")):
-        os.mkdir(os.path.join(output, "Step1"))
     file = os.path.join(output,"Step1",f"{prefix}.gff3")
     vaild_chrom  = set(i.split()[0] for i in open(tad_file))
     with open(gff_file)as f:

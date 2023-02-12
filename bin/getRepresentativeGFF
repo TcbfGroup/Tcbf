@@ -92,9 +92,6 @@ def extract_longest_gff(gff, out, pattern="CDS"):
                                 break
                     if transID in trans:
                         f1.write(line)
-
-
-
                 else:
                     f1.write(line)
 

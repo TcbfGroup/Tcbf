@@ -12,3 +12,7 @@ pigz -d *gz
 for line in *gtf;do
   gffread -E $line -o-> $line.gff3;
 done
+
+for line in *gff3;do
+  getRepresentativeGFF --gff $line -o tmp;mv tmp $line;
+done
