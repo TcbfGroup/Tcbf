@@ -67,10 +67,10 @@ ___
 
 **Install from source**
 ```shell
-git clone https://github.com/hexin010101/Tcbf
+git clone https://github.com/TcbfGroup/Tcbf
 cd Tcbf
 pip install -r requirements.txt
-python setup.py develop
+python setup.py install
 ```
 
 [//]: # (### Quick installation using docker container)
@@ -163,11 +163,13 @@ The red part in the figure represents the TAD range, and the yellow rectangle re
 `tcbf plot-syn-pair -o out -reference human --chrom chr7 -start 127910000 -end 131410000 -plot example.pdf`
 ![image](static/example.png)
 
-For heatmap visualization of multiple species, please refer to [Here](example/heatmap.R) or [online document](https://github.com/hexin010101/Tcbf/example/heatmap.R).
+For heatmap visualization of multiple species, please refer to 
+[Here](example/heatmap.R) or 
+[online document](https://github.com/TcbfGroup/Tcbf/example/heatmap.R).
 ![image](static/heatmap.png)
 
 ## 😉 Author
-Tbcf are maintained by: * [@HeXin](https://github.com/hexin010101)
+Tbcf are maintained by: * [@HeXin](https://github.com/TcbfGroup)
 
 
 For more Help, Please leave a message in the issue, 
