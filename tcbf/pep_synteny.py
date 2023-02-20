@@ -70,7 +70,7 @@ def extract_mRNA_bed(workdir,species):
                 break
     try:
         if type == "mRNA":
-            command = f"python -m jcvi.formats.gff bed --type=mRNA --key={fields} {gff_file} -o {out}"
+            command = f"python -m jcvi.formats.gff bed --primary_only --type=mRNA  --key={fields} {gff_file} -o {out}"
         elif type == "transcript":
             command = f"python -m jcvi.formats.gff bed  --type=transcript --key={fields} {gff_file} -o {out} "
         else:

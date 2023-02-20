@@ -82,6 +82,8 @@ def extract_longest_gff(gff, out, pattern="CDS"):
 
                     if transID in trans:
                         f1.write(line)
+                    else:
+                        continue
                 elif info[2] == pattern:
                     transID = attr_line.get('Parent', "")[0]
                     if not transID:
