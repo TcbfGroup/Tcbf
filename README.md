@@ -168,6 +168,9 @@ For heatmap visualization of multiple species, please refer to
 [online document](https://github.com/TcbfGroup/Tcbf/example/heatmap.R).
 ![image](static/heatmap.png)
 
+
+## Advanced features
+The good performance of Tcbf depends on a few conditions. (1) It is challenging to accurately detect the conserved TAD boundaries in highly fragmented genomes with low-quality gene annotations. To minimize bias, we recommend using genomes with removal of unplaced contigs and scaffolds and high gene annotation quality. With the rapid advances in sequencing technologies for the assembly of high-quality reference genomes, this should not be an issue for most species. (2) In the TAD boundary identification process, we recommend using high-quality Hi-C or similar data with the same resolution in different species to reduce the input data bias of TAD coordinates. (3) For input data with variable genome sizes, users may select an appropriate TAD boundary range through the average TAD size to improve the quality of the results.
 ## 😉 Author
 Tbcf are maintained by: * [@HeXin](https://github.com/TcbfGroup)
 
