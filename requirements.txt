@@ -5,5 +5,5 @@ pandas>=1.4.3
 pyfastx>=0.8.4
 pysam>=0.20.0
 setuptools>=65.5.0
-jcvi>=1.2.20
+jcvi
 python-circos>=0.3.0
