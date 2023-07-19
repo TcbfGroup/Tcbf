@@ -9,7 +9,6 @@ for line in $hg19 $gtf1 $rheMac8 $gtf2 $mm10 $gtf3;do
   done
 
 pigz -d *gz
-
 for line in *gtf;do
   gffread -E $line -o-> $line.gff3;
 done
