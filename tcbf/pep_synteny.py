@@ -1,5 +1,6 @@
 import os.path
 import sys
+from pandas import read_table
 from tempfile import NamedTemporaryFile
 from pandas import read_table,read_csv,concat
 from tcbf.run_command import run_command
@@ -78,6 +79,12 @@ def extract_mRNA_bed(workdir,species):
     except:
         sys.exit("missing valid mRNA feature")
     run_command(command)
+    pep_file =  os.path.join(workdir,"Step2",f"{species}.pep")
+    peps_id = {i.split()[0][1:] for i in open(pep_file) if i.startswith(">")}
+    bed = read_table(out,header=None)
+    bed = bed[bed[3].isin(peps_id)]
+    bed.to_csv(out,header=None,index=False,sep="\t")
+
 def get_pep_pair(workdir,query,target):
     step2 = os.path.join(workdir,"Step2")
     command = f"cd {step2};" \
@@ -106,12 +113,13 @@ def get_pep_pair(workdir,query,target):
 def check_pep_bed(workdir,species):
     if not os.path.exists(os.path.join(workdir,"Step2")):
         os.mkdir(os.path.join(workdir,"Step2"))
-    file1 = os.path.join(workdir,"Step2",f"{species}.bed")
-    if not os.path.exists(file1):
-        extract_mRNA_bed(workdir,species)
     file2 = os.path.join(workdir,"Step2",f"{species}.pep")
     if not os.path.exists(file2):
         extract_pep(workdir,species)
+    file1 = os.path.join(workdir,"Step2",f"{species}.bed")
+    if not os.path.exists(file1):
+        extract_mRNA_bed(workdir,species)
+
 
 
 def align_gene(workdir,query,target,maxgap):
