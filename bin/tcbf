@@ -115,7 +115,7 @@ from tcbf.pep_synteny import align_gene
 @click.option("-t", '--target', required=True)
 @click.option('-o', "--output", type=str, help="output dir", required=True)
 @click.option("--threads", type=int, help="threads number", required=False, default=1)
-@click.option("-aligner", type=click.Choice(["minimap2", "lastz", "blat", "GSAlign"]), default="minimap2")
+@click.option("-aligner", type=click.Choice(["minimap2", "lastz", "blat"]), default="minimap2")
 @click.option("-maxgap", type=int, default=40000)
 @click.option("-minimaplength", type=int, default=2000)
 def second_process_alignment(query, target, output, threads, aligner, maxgap,minimaplength):

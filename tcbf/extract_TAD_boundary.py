@@ -66,11 +66,13 @@ def format_seq(seq):
     return "".join(seq[i:i + 60] + "\n" for i in range(0, len(seq), 60))
 
 
-def add_prefix(fa, prefix, out):
+def add_prefix(fa, prefix, out,tad_file):
     seq = pyfastx.Fasta(fa)
+    valid_chrom = set(i.split()[0] for i in open(tad_file))
     with open(out, "w") as f:
         for line in seq:
-            f.write(f">{prefix}_{line.name}\n{format_seq(line.seq.upper())}")
+            if line.id in valid_chrom:
+                f.write(f">{prefix}_{line.name}\n{format_seq(line.seq.upper())}")
 
 
 def mash_genome(genome_fasta):
@@ -217,7 +219,7 @@ def extract_TAD_boundary(tad: str,
     output = os.path.join(output, "Step1")
     genome_file = os.path.join(output, f"{prefix}.genome.fa")
     if not skip:
-        add_prefix(genome, prefix, genome_file)
+        add_prefix(genome, prefix, genome_file,tad)
         mash_genome(genome_file)
     G1_TAD = TADs(tad,
                   genome_file,
@@ -238,12 +240,12 @@ def extract_TAD_boundary(tad: str,
     check_pep_bed(output_dir,prefix)
 def parse_gff(output,gff_file,prefix,tad_file):
     file = os.path.join(output,"Step1",f"{prefix}.gff3")
-    vaild_chrom  = set(i.split()[0] for i in open(tad_file))
+    valid_chrom  = set(i.split()[0] for i in open(tad_file))
     with open(gff_file)as f:
         with open(file,"w")as f1:
             for line in f:
                 chrom = line.split()[0]
-                if chrom not in vaild_chrom:
+                if chrom not in valid_chrom:
                     continue
                 if not line.startswith("#") or not line:
                     line = f"{prefix}_" + line

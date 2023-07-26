@@ -5,7 +5,7 @@ from pandas import read_table,concat
 import pysam
 
 from tcbf.run_command import run_command
-from tcbf.aligner_paramters import minimap2_align
+from tcbf.aligner_paramters import minimap2_align,lastz_align
 
 #
 # def process_tad_paris(file):
@@ -166,9 +166,14 @@ def align_genome(query, target, workdir, threads, aligner, maxgap,
         extract_gene_not_aligned_boundary(workdir,query,target,gene_not_aligned_boundary)
         query_boundary = gene_not_aligned_boundary.name
         with NamedTemporaryFile("w+t") as Collinearity:
-            if aligner == "nucmer":
-                sys.exit("Nucmer is not supported temporarily, and will be added in the future")
-                # nucmer_align(query_bound, target_genome, Collinearity.name, threads=threads)
+            if aligner == "lastz":
+                lastz_align(workdir,
+                               query_boundary,
+                               target_genome,
+                               Collinearity.name,
+                               query,
+                               threads=threads,
+                               map_length=minimap_length)
             elif aligner == "minimap2":
                 minimap2_align(workdir,
                                query_boundary,
