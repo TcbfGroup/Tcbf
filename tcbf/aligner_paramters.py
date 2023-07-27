@@ -89,6 +89,7 @@ def lastz_align(workdir,bound_query, target, output_file, query,threads,map_leng
 
     results.to_csv(output_file,index=False)
 
+
 def last_align(workdir,bound_query, target, output_file,threads,map_length = 50):
     names = "queryid subjectid  identity alignment_length mismatches gapopens " \
             "qstart qend sstart send evalue bitscore querylength subjectlength rawscore".split()
