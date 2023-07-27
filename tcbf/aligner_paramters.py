@@ -50,14 +50,14 @@ def minimap2_align(workdir,bound_query, target, output_file, query,threads,map_l
 
 
 
-def parallel_lastz(query,target,paramters,threads):
+def parallel_lastz(query, target, parameters, threads):
     def run_lastz(seq_id):
         from tcbf.extract_TAD_boundary import format_seq
         seq = sequences[seq_id]
         with NamedTemporaryFile("w+t") as result_tmp:
             with NamedTemporaryFile("w+t") as tmp_file:
                 tmp_file.write(f">{seq_id}\n{format_seq(seq)}")
-                command = f"lastz {tmp_file.name} {query} {paramters} > {result_tmp.name} "
+                command = f"lastz {tmp_file.name} {query} {parameters} > {result_tmp.name} "
                 run_command(command)
                 result = read_table(result_tmp.name)
                 return result
