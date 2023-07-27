@@ -85,7 +85,7 @@ def lastz_align(workdir,bound_query, target, output_file, query,threads,map_leng
         #     f.write(general_q)
         parameter = " --notransition --step=20  --format=general:name1,start1,end1,name2,start2,end2  --ambiguous=iupac  --nogapped "
     results = parallel_lastz(bound_query,target,parameter,threads)
-    results.index =  "seq_id start end seq_id2 start2 end2".split()
+    results.columns =  "seq_id start end seq_id2 start2 end2".split()
 
     results.to_csv(output_file,index=False)
 
