@@ -93,17 +93,17 @@ def lastz_align(workdir,bound_query, target, output_file, query,threads,map_leng
 def last_align(workdir,bound_query, target, output_file,threads,map_length = 50):
     names = "queryid subjectid  identity alignment_length mismatches gapopens " \
             "qstart qend sstart send evalue bitscore querylength subjectlength rawscore".split()
+    target_species = os.path.basename(target).split("_")[0]
+    db_dir = os.path.join(workdir, "Step1", f"{target_species}_lastdb")
+    if not os.path.exists(db_dir):
+        os.mkdir(db_dir)
     def run_last(seq_id):
         from tcbf.extract_TAD_boundary import format_seq
-        seq = sequences[seq_id]
-        target_species = target.split("_")[0]
-        db_dir = os.path.join(workdir,"Step1",f"{target_species}_lastdb")
-        if not os.path.exists(db_dir):
-            os.mkdir(db_dir)
+
         with NamedTemporaryFile("w+t") as result_tmp:
             with NamedTemporaryFile("w+t") as fasta_tmp_file:
                 if not os.path.exists(os.path.join(db_dir,f"{seq_id}.prj")):
-
+                    seq = sequences[seq_id]
                     fasta_tmp_file.write(f">{seq_id}\n{format_seq(seq)}")
                     command1 = f"lastdb {os.path.join(db_dir,seq_id)} {fasta_tmp_file.name};"
                     run_command(command1)
