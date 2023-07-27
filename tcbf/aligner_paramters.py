@@ -57,17 +57,17 @@ def parallel_lastz(query,target,paramters,threads):
         with NamedTemporaryFile("w+t") as result_tmp:
             with NamedTemporaryFile("w+t") as tmp_file:
                 tmp_file.write(f">{seq_id}\n{format_seq(seq)}")
-                command = f"lastz {tmp_file.name} {query} {paramters} > {result_tmp} "
+                command = f"lastz {tmp_file.name} {query} {paramters} > {result_tmp.name} "
                 run_command(command)
                 result = read_table(result_tmp.name)
                 return result
 
-    from concurrent.futures import ProcessPoolExecutor
+    from concurrent.futures import ProcessPoolExecutor,ThreadPoolExecutor
     target_file = pysam.FastaFile(target)
-    sequences = {i:target_file for i in target_file.references}
-    with ProcessPoolExecutor(max_workers=threads)as executor:
+    sequences = {i:target_file[i] for i in target_file.references}
+    with ThreadPoolExecutor(max_workers=threads)as executor:
         results = [result for result in executor.map(run_lastz, sequences)]
-        results = concat([read_table(i) for i in results])
+        results = concat(results)
     return results
 
 
@@ -78,11 +78,49 @@ def parallel_lastz(query,target,paramters,threads):
 def lastz_align(workdir,bound_query, target, output_file, query,threads,map_length = 50, parameter=None):
 
     if not parameter:
-        parameter = "E=30 H=3000 K=5000 L=5000 M=10 O=400 T=1 Q=general.q --notransition "
+        parameter = f"E=30 H=3000 K=5000 L=5000 M=10 O=400 T=1 Q={os.path.join(workdir,'Step2','general.q')} --notransition "
     parameter += " --ambiguous=iupac    --format=general:name1,start1,end1,name2,start2,end2  "
+    general_q = """A C G T
+91 -114 -31 -123
+-114 100 -125 -31
+-31 -125 100 -114
+-123 -31 -114 91"""
+    with open(os.path.join(workdir,"Step2","general.q"),"w")as f:
+        f.write(general_q)
     result = parallel_lastz(bound_query,target,parameter,threads)
     result.to_csv(output_file,index=False)
 
+def last_align(workdir,bound_query, target, output_file,threads,map_length = 50):
+    names = "queryid subjectid  identity alignment_length mismatches gapopens " \
+            "qstart qend sstart send evalue bitscore querylength subjectlength rawscore".split()
+    def run_last(seq_id):
+        from tcbf.extract_TAD_boundary import format_seq
+        seq = sequences[seq_id]
+        target_species = target.split("_")[0]
+        db_dir = os.path.join(workdir,"Step1",f"{target_species}_lastdb")
+        if not os.path.exists(db_dir):
+            os.mkdir(db_dir)
+        with NamedTemporaryFile("w+t") as result_tmp:
+            with NamedTemporaryFile("w+t") as fasta_tmp_file:
+                if not os.path.exists(os.path.join(db_dir,f"{seq_id}.prj")):
+
+                    fasta_tmp_file.write(f">{seq_id}\n{format_seq(seq)}")
+                    command1 = f"lastdb {os.path.join(db_dir,seq_id)} {fasta_tmp_file.name};"
+                    run_command(command1)
+
+
+                command = f"lastal -f BlastTab+ {os.path.join(db_dir,seq_id)} {bound_query}  > {result_tmp.name} "
+                run_command(command)
+
+                result = read_table(result_tmp.name,comment="#", names=names).query(f"alignment_length >= {map_length}").loc[:,["queryid","qstart","qend","subjectid","sstart","send"]]
+        return result
+    from concurrent.futures import ThreadPoolExecutor
+    target_file = pysam.FastaFile(target)
+    sequences = {i:target_file[i] for i in target_file.references}
+    with ThreadPoolExecutor(max_workers=threads)as executor:
+        results = concat(list(executor.map(run_last, sequences)))
+    results.index =  "seq_id start end seq_id2 start2 end2".split()
+    results.to_csv(output_file,index=False)
 
 def blat_align(workdir,bound_query, target, output_file, query,threads,map_length = 50, parameter=None):
     genome1 = os.path.join(workdir,"Step1",f"{query}.genome.fa")

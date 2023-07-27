@@ -5,7 +5,7 @@ from pandas import read_table,concat
 import pysam
 
 from tcbf.run_command import run_command
-from tcbf.aligner_paramters import minimap2_align,lastz_align
+from tcbf.aligner_paramters import minimap2_align,lastz_align,last_align
 
 #
 # def process_tad_paris(file):
@@ -174,6 +174,13 @@ def align_genome(query, target, workdir, threads, aligner, maxgap,
                                query,
                                threads=threads,
                                map_length=minimap_length)
+            elif aligner == "last":
+                last_align(workdir,bound_query=query_boundary,
+                           target=target_genome,
+                           output_file=Collinearity.name,
+                           threads=threads,
+                           map_length=minimap_length
+                           )
             elif aligner == "minimap2":
                 minimap2_align(workdir,
                                query_boundary,
