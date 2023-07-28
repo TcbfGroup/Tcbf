@@ -50,7 +50,7 @@ def minimap2_align(workdir,bound_query, target, output_file, query,threads,map_l
 
 
 
-def parallel_lastz(query, target, parameters, threads):
+def parallel_lastz(query, target, parameters, threads,map_length):
     def run_lastz(seq_id):
         from tcbf.extract_TAD_boundary import format_seq
         seq = sequences[seq_id]
@@ -59,7 +59,8 @@ def parallel_lastz(query, target, parameters, threads):
                 tmp_file.write(f">{seq_id}\n{format_seq(seq)}")
                 command = f"lastz {tmp_file.name} {query} {parameters} > {result_tmp.name} "
                 run_command(command)
-                result = read_table(result_tmp.name)
+                result = read_table(result_tmp.name,engine="pyarrow").query(f"end2 - start2 >= {map_length}")
+
                 return result
 
     from concurrent.futures import ThreadPoolExecutor
@@ -83,8 +84,8 @@ def lastz_align(workdir,bound_query, target, output_file, query,threads,map_leng
 
         # with open(os.path.join(workdir,"Step2","general.q"),"w")as f:
         #     f.write(general_q)
-        parameter = " --notransition --step=20  --format=general:name1,start1,end1,name2,start2,end2  --ambiguous=iupac  --nogapped "
-    results = parallel_lastz(bound_query,target,parameter,threads)
+        parameter = " --notransition --step=20  --format=general:name2,start2,end2,name1,start1,end1  --ambiguous=iupac  --nogapped --identity=90 "
+    results = parallel_lastz(bound_query,target,parameter,threads,map_length)
     results.columns =  "seq_id start end seq_id2 start2 end2".split()
 
     results.to_csv(output_file,index=False)
