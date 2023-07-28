@@ -74,17 +74,17 @@ def parallel_lastz(query, target, parameters, threads,map_length):
 def lastz_align(workdir,bound_query, target, output_file, query,threads,map_length = 50, parameter=None):
 
     if not parameter:
-#         parameter = f"E=30 H=3000 K=5000 L=5000 M=10 O=400 T=1 Q={os.path.join(workdir,'Step2','general.q')} --notransition --step=20"
-#     parameter += " --ambiguous=iupac    --format=general:name1,start1,end1,name2,start2,end2  "
-#     general_q = """A C G T
-# 91 -114 -31 -123
-# -114 100 -125 -31
-# -31 -125 100 -114
-# -123 -31 -114 91"""
+        parameter = f"E=30 H=3000 K=5000 L=5000 M=10 O=400 T=1 Q={os.path.join(workdir,'Step2','general.q')} "
+    # parameter += " --ambiguous=iupac    --format=general:name1,start1,end1,name2,start2,end2  "
+        general_q = """A C G T
+91 -114 -31 -123
+-114 100 -125 -31
+-31 -125 100 -114
+-123 -31 -114 91"""
 
-        # with open(os.path.join(workdir,"Step2","general.q"),"w")as f:
-        #     f.write(general_q)
-        parameter = " --notransition --step=20  --format=general:name2,start2,end2,name1,start1,end1  --ambiguous=iupac  --nogapped --identity=90 "
+        with open(os.path.join(workdir,"Step2","general.q"),"w")as f:
+            f.write(general_q)
+        parameter += "  --format=general:name2,start2,end2,name1,start1,end1  --ambiguous=iupac   "
     results = parallel_lastz(bound_query,target,parameter,threads,map_length)
     results.columns =  "seq_id start end seq_id2 start2 end2".split()
 
