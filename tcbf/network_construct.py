@@ -116,6 +116,7 @@ def get_max_score(network1, network2):
     data = n["combine"].str.split("-", expand=True)
     data["max_score"] = max_score
     data.columns = "genome1 genome2 score".split()
+    data = data.query("score >= 5000")
     return data
 
 def construct_one_to_many(workdir,need_syn):
