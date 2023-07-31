@@ -162,7 +162,7 @@ def onetomany_throught_Cluster(workdir):
     from copy import deepcopy
     species = get_species(workdir)
     onetomany = os.path.join(workdir,"Result","onetomany")
-    if not os.path.exists(onetomany)
+    if not os.path.exists(onetomany):
         os.mkdir(onetomany)
     group = read_table(os.path.join(workdir,"Result","TAD_groups.tsv"),index_col=0)
     unassign = read_table(os.path.join(workdir,"Result","Unassignd_TAD.tsv"))
