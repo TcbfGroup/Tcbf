@@ -158,6 +158,27 @@ def construct_one_to_many(workdir,need_syn):
         final.to_csv(os.path.join(step3,f"{s1}.join.txt"),index=False,sep = "\t")
 
 
+def onetomany_throught_Cluster(workdir):
+    from copy import deepcopy
+    species = get_species(workdir)
+    onetomany = os.path.join(workdir,"Result","onetomany")
+    if not os.path.exists(onetomany)
+        os.mkdir(onetomany)
+    group = read_table(os.path.join(workdir,"Result","TAD_groups.tsv"),index_col=0)
+    unassign = read_table(os.path.join(workdir,"Result","Unassignd_TAD.tsv"))
+    merge = concat([group,unassign])
+    for s in species:
+        tmp = deepcopy(merge).dropna(subset=s)
+        tmp[s] = tmp[s].str.split(";")
+        tmp = tmp.explode(s)
+        tmp["order"] = tmp[s].str.split("_").str.get(-1).astype(int)
+        tmp.sort_values("order",inplace=True)
+        new_column_order = [s] + [col for col in tmp.columns if col != s]
+        new_column_order.remove("order")
+        tmp = tmp[new_column_order]
+        tmp.to_csv(os.path.join(onetomany,f"{s}.txt"),index=False,sep="\t")
+
+
 
 
 
@@ -177,3 +198,4 @@ def network_construct(workdir, need_syn):
 
     extract_ortho_group(abs_path)
     construct_one_to_many(workdir,need_syn)
+    onetomany_throught_Cluster(workdir)
