@@ -93,7 +93,7 @@ def position_to_boundary_TAD(workdir, reference, chrom, start, end,
                                             x_min=start)
         return df
 
-    bound_file = os.path.join(workdir, "Step1", f"{reference}.bound.bed")
+    bound_file = os.path.join(workdir, "Step1", f"{reference}.boundary.bed")
     bounds = parse_data(read_csv(bound_file))
 
     tad_file = os.path.join(workdir, "Step1", f"{reference}.TAD.csv")
@@ -238,7 +238,7 @@ def get_pair_TAD_boundary_region(workdir, pair_df, only_primary):
 
     reference = pair_df.columns[1]
 
-    file = os.path.join(workdir, "Step1", f"{reference}.bound.bed")
+    file = os.path.join(workdir, "Step1", f"{reference}.boundary.bed")
     boundary = read_csv(file)
     boundary.index = boundary["tad_name"]
     need = boundary.loc[paired_boundary]
@@ -278,7 +278,7 @@ def get_pairwise_genome_region(workdir, reference,
     # boundary = boundary[mask]["tad_name"]
     boundary = position_to_boundary_TAD(workdir, reference, chrom, start, end, xrange=(0, 1))[0]["tad_name"]
 
-    one_to_many = os.path.join(workdir, "Result", "one_to_many", f"{reference}.txt")
+    one_to_many = os.path.join(workdir, "Step3",  f"{reference}.join.txt")
     pair = read_table(one_to_many)
     pair = pair[pair[reference].isin(boundary)]
 

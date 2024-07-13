@@ -160,7 +160,9 @@ three-dimensional structural relationship.
 The red part in the figure represents the TAD range, and the yellow rectangle represents the TAD boundary. Light blue indicates collinear pairs.
 
 
-`tcbf plot-syn-pair -o out -reference human --chrom chr7 -start 127910000 -end 131410000 -plot example.pdf`
+`tcbf plot-syn-pair -o test --reference human --chrom chr7 --start 127910000 --end 131410000 --plot example.pdf  human macaque mouse`
+
+
 ![image](static/example.png)
 
 For heatmap visualization of multiple species, please refer to 
